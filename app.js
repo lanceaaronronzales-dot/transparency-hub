@@ -41,6 +41,7 @@ function verifyAnnouncementVisibility(announcementText) {
         body.style.paddingTop = '40px';         // Pushes the site down so it fits nicely
     }
 }
+
 /**
  * Fetches image configurations dynamically from the Google Sheet and builds the backdrop slides
  */
@@ -186,6 +187,14 @@ async function fetchLiveProjects() {
 
         const cleanRows = parseCSV(dataText);
 
+        // Dynamic Announcement Controller Integration
+        if (cleanRows.length > 1 && cleanRows[1][0]) {
+            const liveAnnouncementText = cleanRows[1][0]; 
+            verifyAnnouncementVisibility(liveAnnouncementText);
+        } else {
+            verifyAnnouncementVisibility("");
+        }
+
         if (cleanRows.length <= 1) {
             loadingIndicator.innerHTML = `<p style="font-size: 12px; color: #94a3b8;">No active records posted currently.</p>`;
             return;
@@ -193,7 +202,8 @@ async function fetchLiveProjects() {
 
         gridContainer.innerHTML = '';
 
-        for (let i = 1; i < cleanRows.length; i++) {
+        // Project loop starts at i = 2 assuming row 2 handles the global announcement configuration
+        for (let i = 2; i < cleanRows.length; i++) { 
             const row = cleanRows[i];
             if (row.length < 3 || !row[0]) continue; 
 
@@ -385,7 +395,6 @@ function setupFAQEngine() {
 
 // Bind interactive event hooks securely into the global runtime stack loading phase
 window.addEventListener('DOMContentLoaded', () => {
-    verifyAnnouncementVisibility();
     fetchLiveSlideshow(); 
     fetchLiveCouncil();
     fetchLiveProjects();
