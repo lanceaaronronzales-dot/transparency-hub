@@ -748,3 +748,23 @@ body {
         grid-template-columns: 1fr !important; 
     }
 }
+
+/* 1. Force every element to include padding and borders in its total width */
+* {
+    box-sizing: border-box;
+}
+
+/* 2. Lock the body width and hide any accidental horizontal overflow */
+html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden; /* This is the magic line that kills the white space! */
+    margin: 0;
+    padding: 0;
+}
+
+/* 3. Ensure no image ever stretches past its container */
+img {
+    max-width: 100%;
+    height: auto;
+}
