@@ -4,31 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SK Barangay Portal</title>
-    <!-- Google Fonts Framework Integration -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Link to our external stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-   <!-- EMERGENCY ANNOUNCEMENT BAR (RESERVED EXCLUSIVELY FOR HIGH CRISIS EMERGENCY TIER) -->
-    <div id="emergency-announcement" class="announcement-banner" style="position: fixed; top: 0; left: 0; width: 100%; z-index: 10000; display: none; background: #ef4444; color: white;">
-        <!-- Injected via app.js -->
-    </div>
+    <div id="emergency-announcement" class="announcement-banner" style="position: fixed; top: 0; left: 0; width: 100%; z-index: 10000; display: none; background: #ef4444; color: white;"></div>
 
-    <!-- FULL-WIDTH EDGE-TO-EDGE IMMERSIVE BANNER -->
     <header class="hero-banner immersive-hero" style="margin-top: 0; min-height: 65vh; padding: 100px 4% 80px 4%;">
         <div id="hero-bg-slideshow" class="hero-bg-slideshow"></div>
         <div class="hero-overlay"></div>
 
-        <!-- HERO INTERIOR CANVAS: Split column design -->
-        <div class="hero-content-wrapper" style="max-width: 1500px; width: 100%; display: flex; align-items: flex-start; justify-content: space-between; gap: 40px; flex-wrap: wrap;">
+        <div class="hero-content-wrapper" style="max-width: 1500px; width: 100%; display: flex; align-items: flex-start; justify-content: space-between; gap: 40px; flex-wrap: wrap; margin: 0 auto;">
             
-            <!-- LEFT COLUMN: Main Branding Information Elements -->
             <div class="hero-content-layer" style="flex: 1; min-width: 320px; max-width: 750px;">
                 <div class="hero-brand-area">
                     <img src="Images/SK LOGO.jpg" alt="SK LOGO" class="sk-logo">
@@ -44,20 +35,13 @@
                 </p>
             </div>
 
-            <!-- RIGHT COLUMN: Elegant Translucent Frosted Glass Secondary Alerts Container -->
-            <div id="hero-alerts-aside" style="flex: 1; min-width: 320px; max-width: 450px; display: flex; flex-direction: column; gap: 16px; margin-top: 20px;">
-                <!-- Secondary alerts (URGENT, NOTICE, INFO) load here seamlessly via app.js -->
-            </div>
+            <div id="hero-alerts-aside" style="flex: 1; min-width: 320px; max-width: 450px; display: flex; flex-direction: column; gap: 16px; margin-top: 20px;"></div>
             
         </div>
     </header>
 
-    <!-- MAIN DYNAMIC ADAPTIVE DASHBOARD ENGINE WRAPPER -->
     <main class="dashboard-viewport-grid">
         
-        <!-- ==========================================
-             LEFT PANEL: SK COUNCIL DIRECTORY (STATIC)
-             ========================================== -->
         <section id="council" class="dashboard-panel side-column">
             <div class="section-header council-header">
                 <h2>SK Council Directory</h2>
@@ -70,28 +54,22 @@
             <div id="council-grid" class="council-grid hidden"></div>
         </section>
 
-        <!-- ==========================================
-             CENTER PANEL: NAVIGABLE PORTAL MAIN CORRIDOR
-             ========================================== -->
         <div class="dashboard-panel center-column">
             
-            <!-- CENTRAL PORTAL DROPDOWN SELECTOR SYSTEM -->
             <div class="sub-nav-header-bar" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; box-shadow: var(--shadow-sm);">
                 <div style="font-weight: 800; font-size: 14px; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;">
                     <i class="fa-solid fa-layer-group" style="color: #2563eb;"></i> 
                     <span>Select Portal View:</span>
                 </div>
                 <select id="portal-view-selector" onchange="navigateCenterView(this.value, '')" style="padding: 10px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: #f8fafc; font-family: inherit; font-size: 13px; font-weight: 700; color: #334155; outline: none; cursor: pointer; width: 220px;">
-                    <option value="view-home">🏠 Home & Bulletin</option>
-                    <option value="view-docs">📷 Photo Gallery</option>
+                    <option value="view-home">⚙️ Home & Bulletin</option>
+                    <option value="view-docs">📸 Photo Gallery</option>
                     <option value="view-pipeline">📊 Project Pipeline</option>
-                    <option value="view-budget">💼 Budget Allocation</option>
+                    <option value="view-budget">📂 Budget Allocation</option>
                 </select>
             </div>
 
-            <!-- PAGE SECTION A: HOME BULLETIN BOARD VIEW -->
             <div id="view-home">
-                <!-- Barangay Bulletin board block -->
                 <section id="bulletin" class="center-section-block" style="margin-bottom: 32px;">
                     <div class="section-header hub-header" style="background: #2563eb; padding: 1.5rem; border-radius: 12px 12px 0 0; color: white;">
                         <h2 style="color: white; margin: 0;"><i class="fa-solid fa-bullhorn"></i> Barangay Bulletin Board</h2>
@@ -104,7 +82,6 @@
                     </div>
                 </section>
 
-                <!-- CBYDP Strategic Framework Base pillars block -->
                 <section id="plans" class="center-section-block">
                     <div class="section-header pillar-header">
                         <h2>CBYDP Strategic Framework</h2>
@@ -130,19 +107,16 @@
                 </section>
             </div>
 
-            <!-- PAGE SECTION B: SEPARATE DEDICATED PHOTO DOCUMENTATION FEED -->
             <div id="view-docs" style="display: none;">
                 <div class="section-header" style="padding: 0; margin-bottom: 20px;">
                     <h2 style="font-size: 1.35rem; font-weight: 800; color: #0f172a;"><i class="fa-solid fa-images" style="color:#2563eb;"></i> Council Activities & Documentations</h2>
                     <p style="font-size: 13px; color: #64748b;">Facebook-style event streams logged directly by our administrators.</p>
                 </div>
-                <!-- Targeted Dynamic Injection Area for Documentations -->
                 <div id="documentation-feed">
                     <p style="text-align: center; font-size: 14px; color: #94a3b8;"><i class="fa-solid fa-circle-notch spinner"></i> Loading feed updates...</p>
                 </div>
             </div>
 
-            <!-- PAGE SECTION C: LIVE PROJECTS PIPELINE CORRIDOR -->
             <div id="view-pipeline" style="display: none;">
                 <section id="projects" class="center-section-block">
                     <div class="section-header tracker-header">
@@ -157,7 +131,6 @@
                 </section>
             </div>
 
-            <!-- PAGE SECTION D: TRANSPARENT VALUE BUDGET ALLOCATION LEDGERS -->
             <div id="view-budget" style="display: none;">
                 <section id="budget" class="center-section-block">
                     <div class="section-header tracker-header" style="border-bottom: 1px solid #f1f5f9; padding-bottom: 20px; margin-bottom: 24px;">
@@ -172,12 +145,8 @@
 
         </div>
 
-        <!-- ==========================================
-             RIGHT PANEL: YOUTH VOICE FEEDBACK HUB & AI CHAT DESK (STATIC)
-             ========================================== -->
-        <div class="dashboard-panel side-column" style="display: flex; flex-direction: column; gap: 32px; background: transparent; border: none; box-shadow: none; overflow: visible;">
+        <div class="dashboard-panel side-column flex-column-mobile" style="display: flex; flex-direction: column; gap: 32px; background: transparent; border: none; box-shadow: none; overflow: visible;">
             
-            <!-- SECTION 1: YOUTH VOICE FEEDBACK MODULE -->
             <section id="youth-voice" class="center-section-block" style="width: 100%;">
                 <div class="section-header hub-header" style="padding-bottom: 12px;">
                     <h2>Youth Voice Hub</h2>
@@ -225,7 +194,6 @@
                 </div>
             </section>
 
-            <!-- SECTION 2: AI AUTOMATED CHAT ASSISTANT -->
             <section id="ai-assistant" class="center-section-block" style="width: 100%;">
                 <div class="section-header ai-header" style="padding-bottom: 12px;">
                     <h2>SK AI Assistant</h2>
@@ -258,7 +226,6 @@
 
     </main>
 
-    <!-- TRUE FULL-WIDTH STATIC BACKGROUND FOOTER BANNER -->
     <footer class="footer-banner immersive-footer">
         <div class="footer-bg-layer">
             <img src="documentation/slide1.jpg" alt="SK Council Community Backdrop">
@@ -270,7 +237,6 @@
         </div>
     </footer>
 
-    <!-- Script Entry Link -->
     <script src="app.js"></script>
 </body>
 </html>
