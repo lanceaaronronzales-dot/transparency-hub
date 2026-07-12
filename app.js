@@ -28,18 +28,21 @@ function parseCSV(text) {
 }
 
 /**
- * Controls the top-level high-priority Emergency Banner layout
+ * Controls the top-level high-priority Emergency Banner layout (Adaptive ID Matching)
  */
 function processEmergencyAlert(alertText) {
-    const emergencyBar = document.getElementById('emergency-announcement');
-    const emergencyPara = document.getElementById('emergency-text');
+    // Tries finding the new ID first, falls back to old ID if missing
+    const emergencyBar = document.getElementById('emergency-announcement') || document.getElementById('sticky-announcement');
+    const emergencyPara = document.getElementById('emergency-text') || document.getElementById('announcement-text');
 
     if (!emergencyBar) return;
 
     if (!alertText || alertText.trim() === "" || alertText.trim() === "N/A" || alertText.trim().toLowerCase() === "none") {
         emergencyBar.style.setProperty('display', 'none', 'important');
+        emergencyBar.classList.add('hidden');
     } else {
         emergencyBar.style.setProperty('display', 'flex', 'important');
+        emergencyBar.classList.remove('hidden');
         if (emergencyPara) emergencyPara.innerText = alertText;
     }
 }
@@ -151,7 +154,7 @@ async function fetchLiveProjects() {
         console.error("Pipeline Engine Error:", err);
         if (loadingIndicator) loadingIndicator.classList.add('hidden');
         if (errorIndicator) {
-            errorIndicator.classList.remove('hidden');
+            errorIndicator.className = "status-box error-box";
             errorIndicator.querySelector('p').innerText = err.message;
         }
     }
@@ -241,7 +244,7 @@ function switchTab(targetTab) {
         if(feedbackForm) feedbackForm.classList.remove('hidden'); if(contactForm) contactForm.classList.add('hidden');
         if(feedbackBtn) feedbackBtn.classList.add('active'); if(contactBtn) contactBtn.classList.remove('active');
     } else {
-        if(contactForm) contactForm.classList.remove('hidden'); if(feedbackForm) feedbackForm.classList.add('hidden');
+        if(contactForm) contactForm.remove('hidden'); if(feedbackForm) feedbackForm.classList.add('hidden');
         if(contactBtn) contactBtn.className = 'active'; if(feedbackBtn) feedbackBtn.classList.remove('active');
     }
 }
