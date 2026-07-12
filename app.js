@@ -267,7 +267,7 @@ async function fetchLiveCouncil() {
 }
 
 /**
- * FIXED: Cleanly handles tab transitions without altering predefined HTML class layout configurations
+ * Bulletproof Tab Switching Pipeline (Direct Style Preservation Layout)
  */
 function switchTab(targetTab) {
     const feedbackForm = document.getElementById('feedback-form');
@@ -279,15 +279,18 @@ function switchTab(targetTab) {
     if (alertBox) alertBox.classList.add('hidden');
 
     if (targetTab === 'feedback') {
-        if (feedbackForm) feedbackForm.classList.remove('hidden');
-        if (contactForm) contactForm.classList.add('hidden');
-        if (feedbackBtn) feedbackBtn.classList.add('active');
-        if (contactBtn) contactBtn.classList.remove('active');
+        if (feedbackForm) feedbackForm.style.setProperty('display', 'block', 'important');
+        if (contactForm) contactForm.style.setProperty('display', 'none', 'important');
+        
+        // Force visual states without clearing layout metadata configurations
+        if (feedbackBtn) { feedbackBtn.style.background = "var(--brand-blue, #2563eb)"; feedbackBtn.style.color = "#ffffff"; }
+        if (contactBtn) { contactBtn.style.background = "transparent"; contactBtn.style.color = "var(--text-muted, #64748b)"; }
     } else {
-        if (contactForm) contactForm.classList.remove('hidden');
-        if (feedbackForm) feedbackForm.classList.add('hidden');
-        if (contactBtn) contactBtn.classList.add('active');
-        if (feedbackBtn) feedbackBtn.classList.remove('active');
+        if (contactForm) contactForm.style.setProperty('display', 'block', 'important');
+        if (feedbackForm) feedbackForm.style.setProperty('display', 'none', 'important');
+        
+        if (contactBtn) { contactBtn.style.background = "var(--brand-blue, #2563eb)"; contactBtn.style.color = "#ffffff"; }
+        if (feedbackBtn) { feedbackBtn.style.background = "transparent"; feedbackBtn.style.color = "var(--text-muted, #64748b)"; }
     }
 }
 
@@ -301,7 +304,8 @@ function setupFormListeners() {
             submitBtn.innerText = "Submitting..."; submitBtn.disabled = true;
             try {
                 await fetch(FEEDBACK_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ category: document.getElementById('feedback-category').value, text: document.getElementById('feedback-text').value }) });
-                feedbackForm.classList.add('hidden'); alertBox.classList.remove('hidden');
+                feedbackForm.style.setProperty('display', 'none', 'important');
+                alertBox.classList.remove('hidden');
                 alertText.innerText = `Mabuhay! Your suggestion has been successfully recorded anonymously.`;
                 feedbackForm.reset();
             } catch (err) { alertBox.classList.remove('hidden'); alertText.innerText = "Submission exception detected."; }
@@ -311,7 +315,9 @@ function setupFormListeners() {
     if(contactForm) {
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault(); const name = document.getElementById('contact-name').value;
-            if(feedbackForm) feedbackForm.classList.add('hidden'); contactForm.classList.add('hidden'); alertBox.classList.remove('hidden');
+            if(feedbackForm) feedbackForm.style.setProperty('display', 'none', 'important');
+            contactForm.style.setProperty('display', 'none', 'important'); 
+            alertBox.classList.remove('hidden');
             alertText.innerText = `Thank you ${name}! Your request has been logged.`; contactForm.reset();
         });
     }
