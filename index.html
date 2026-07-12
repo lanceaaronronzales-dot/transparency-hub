@@ -16,7 +16,7 @@
 <body>
 
    <!-- EMERGENCY ANNOUNCEMENT BAR -->
-    <div id="emergency-announcement" class="announcement-banner hidden" style="background: #ef4444; color: white;">
+    <div id="emergency-announcement" class="announcement-banner" style="background: #ef4444; color: white;">
         <div class="announcement-content">
             <span class="announcement-badge"><i class="fa-solid fa-triangle-exclamation"></i> URGENT</span>
             <p id="emergency-text"></p>
@@ -25,15 +25,9 @@
 
     <!-- FULL-WIDTH EDGE-TO-EDGE IMMERSIVE BANNER -->
     <header class="hero-banner immersive-hero">
-        <!-- Dynamic Background Slideshow Target Layer -->
-        <div id="hero-bg-slideshow" class="hero-bg-slideshow">
-            <!-- Image slides will inject here automatically from app.js -->
-        </div>
-        
-        <!-- Dark Overlay for High Readability -->
+        <div id="hero-bg-slideshow" class="hero-bg-slideshow"></div>
         <div class="hero-overlay"></div>
 
-        <!-- Foreground Content Layer -->
         <div class="hero-content-wrapper">
             <div class="hero-content-layer">
                 <div class="hero-brand-area">
@@ -56,143 +50,166 @@
     <main class="dashboard-viewport-grid">
         
         <!-- ==========================================
-             LEFT PANEL: SK COUNCIL DIRECTORY
+             LEFT PANEL: SK COUNCIL DIRECTORY (STATIC)
              ========================================== -->
         <section id="council" class="dashboard-panel side-column">
             <div class="section-header council-header">
                 <h2>SK Council Directory</h2>
                 <p>Official youth leaders assigned to your specific area.</p>
             </div>
-
             <div id="council-loading-state" class="status-box loading-box">
                 <i class="fa-solid fa-circle-notch spinner"></i>
                 <p>Loading profiles...</p>
             </div>
-
-            <div id="council-grid" class="council-grid hidden">
-                <!-- Injected via app.js -->
-            </div>
+            <div id="council-grid" class="council-grid hidden"></div>
         </section>
 
         <!-- ==========================================
-             CENTER PANEL: STRATEGIC PLAN, BULLETIN, PROJECTS, FEEDBACK FORMS
+             CENTER PANEL: NAVIGABLE PORTAL MAIN CORRIDOR
              ========================================== -->
         <div class="dashboard-panel center-column">
             
-            <!-- SECTION 1: CBYDP PILLARS -->
-            <section id="plans" class="center-section-block">
-                <div class="section-header pillar-header">
-                    <h2>CBYDP Strategic Framework</h2>
-                    <p>The core target focus pillars of our active youth council.</p>
+            <!-- CENTRAL PORTAL MASTER SUB-NAVIGATION MENU HEADER -->
+            <div class="sub-nav-header-bar" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; box-shadow: var(--shadow-sm);">
+                <div style="font-weight: 800; font-size: 14px; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 8px;">
+                    <i class="fa-solid fa-folder-open" style="color: #2563eb;"></i> Portal Sections:
                 </div>
-                
-                <div class="pillars-grid">
-                    <div class="pillar-card">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                        <h3>Education & Skills</h3>
-                        <p>Providing localized review sessions, technology capability seminars, and leadership development frameworks.</p>
+                <div style="display: flex; gap: 8px;">
+                    <button id="nav-home-btn" onclick="navigateCenterView('view-home', 'nav-home-btn')" style="border: none; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; background: #2563eb; color: #ffffff;">
+                        <i class="fa-solid fa-house"></i> Home Feed
+                    </button>
+                    <button id="nav-pipeline-btn" onclick="navigateCenterView('view-pipeline', 'nav-pipeline-btn')" style="border: none; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; background: #f1f5f9; color: #334155;">
+                        <i class="fa-solid fa-diagram-project"></i> Project Pipeline
+                    </button>
+                    <button id="nav-budget-btn" onclick="navigateCenterView('view-budget', 'nav-budget-btn')" style="border: none; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; background: #f1f5f9; color: #334155;">
+                        <i class="fa-solid fa-wallet"></i> Budget Allocation
+                    </button>
+                </div>
+            </div>
+
+            <!-- PAGE SECTION A: HOME ANNOUNCEMENTS AND FACEBOOK DOCUMENTATIONS FEED -->
+            <div id="view-home">
+                <!-- Barangay Bulletin board block -->
+                <section id="bulletin" class="center-section-block" style="margin-bottom: 32px;">
+                    <div class="section-header hub-header" style="background: #2563eb; padding: 1.5rem; border-radius: 12px 12px 0 0; color: white;">
+                        <h2 style="color: white; margin: 0;"><i class="fa-solid fa-bullhorn"></i> Barangay Bulletin Board</h2>
+                        <p style="color: #bfdbfe; margin: 4px 0 0 0;">General updates and active announcements from the council.</p>
                     </div>
-                    <div class="pillar-card">
-                        <i class="fa-solid fa-heart-pulse"></i>
-                        <h3>Health & Sports</h3>
-                        <p>Grassroots sports tournaments, physical wellness distributions, and proactive localized anti-drug campaigns.</p>
+                    <div class="form-container" style="border-top-left-radius: 0; border-top-right-radius: 0; padding: 24px; background: #ffffff; border: 1px solid #e2e8f0; border-top: none; box-shadow: var(--shadow-sm);">
+                        <div id="general-bulletin-container"></div>
                     </div>
-                    <div class="pillar-card">
-                        <i class="fa-solid fa-seedling"></i>
-                        <h3>Environmental Action</h3>
-                        <p>Community-wide clean-up drives, plastic waste management systems, and climate accountability advocacies.</p>
+                </section>
+
+                <!-- Facebook Style Community Photo Documentations Stream Header -->
+                <div class="section-header" style="padding: 0; margin-bottom: 16px;">
+                    <h2 style="font-size: 1.25rem; font-weight: 800; color: #0f172a;"><i class="fa-solid fa-images" style="color:#2563eb;"></i> Council Activities & Documentations</h2>
+                    <p style="font-size: 13px; color: #64748b;">Live feed logs posted directly by our council team administrators.</p>
+                </div>
+
+                <!-- Targeted Dynamic Injection Area for Documentations -->
+                <div id="documentation-feed">
+                    <p style="text-align: center; font-size: 14px; color: #94a3b8;"><i class="fa-solid fa-circle-notch spinner"></i> Loading feed updates...</p>
+                </div>
+
+                <!-- CBYDP Strategic Framework Base pillars block placed cleanly under the feed stream -->
+                <section id="plans" class="center-section-block" style="margin-top: 16px;">
+                    <div class="section-header pillar-header">
+                        <h2>CBYDP Strategic Framework</h2>
+                        <p>The core target focus pillars of our active youth council.</p>
                     </div>
-                </div>
-            </section>
-
-            <!-- SECTION 2: NEW PERMANENT BULLETIN BOARD -->
-            <section id="bulletin" class="center-section-block">
-                <div class="section-header hub-header" style="background: #2563eb; padding: 1.5rem; border-radius: 12px 12px 0 0; color: white;">
-                    <h2 style="color: white; margin: 0;"><i class="fa-solid fa-bullhorn"></i> Barangay Bulletin Board</h2>
-                    <p style="color: #bfdbfe; margin: 4px 0 0 0;">General updates and active announcements from the council.</p>
-                </div>
-                
-                <div class="form-container" style="border-top-left-radius: 0; border-top-right-radius: 0; padding: 24px; background: #ffffff; border: 1px solid #e2e8f0; border-top: none; box-shadow: var(--shadow-sm); margin-bottom: 24px;">
-                    <div id="general-bulletin-container">
-                        <p style="font-size: 14px; color: #94a3b8; text-align: center;">
-                            <i class="fa-solid fa-circle-notch spinner"></i> Loading latest announcements...
-                        </p>
+                    <div class="pillars-grid">
+                        <div class="pillar-card">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <h3>Education & Skills</h3>
+                            <p>Providing localized review sessions, technology capability seminars, and leadership development frameworks.</p>
+                        </div>
+                        <div class="pillar-card">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                            <h3>Health & Sports</h3>
+                            <p>Grassroots sports tournaments, physical wellness distributions, and proactive localized anti-drug campaigns.</p>
+                        </div>
+                        <div class="pillar-card">
+                            <i class="fa-solid fa-seedling"></i>
+                            <h3>Environmental Action</h3>
+                            <p>Community-wide clean-up drives, plastic waste management systems, and climate accountability advocacies.</p>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </div>
 
-            <!-- SECTION 3: LIVE PROJECT PIPELINE -->
-            <section id="projects" class="center-section-block">
-                <div class="section-header tracker-header">
-                    <h2>Live Project Pipeline</h2>
-                    <p>Pulled directly from our public project ledger files for real-time tracking.</p>
-                </div>
+            <!-- PAGE SECTION B: LIVE PROJECTS PIPELINE CORRIDOR -->
+            <div id="view-pipeline" style="display: none;">
+                <section id="projects" class="center-section-block">
+                    <div class="section-header tracker-header">
+                        <h2>Live Project Pipeline</h2>
+                        <p>Pulled directly from our public project ledger files for real-time tracking.</p>
+                    </div>
+                    <div id="loading-state" class="status-box loading-box">
+                        <i class="fa-solid fa-circle-notch spinner"></i>
+                        <p>Reading repository ledger...</p>
+                    </div>
+                    <div id="project-grid" class="project-grid hidden"></div>
+                </section>
+            </div>
 
-                <div id="loading-state" class="status-box loading-box">
-                    <i class="fa-solid fa-circle-notch spinner"></i>
-                    <p>Reading repository ledger...</p>
-                </div>
+            <!-- PAGE SECTION C: TRANSPARENT VALUE BUDGET allocation LEDGERS -->
+            <div id="view-budget" style="display: none;">
+                <section id="budget" class="center-section-block">
+                    <div class="section-header tracker-header" style="border-bottom: 1px solid #f1f5f9; padding-bottom: 20px; margin-bottom: 24px;">
+                        <h2>Public Fund Allocation & Budget Ledger</h2>
+                        <p>Real-time updates regarding fund disbursements and transparency balance computations.</p>
+                    </div>
+                    <div id="budget-ledger-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 0 24px 24px 24px;">
+                        <p style="text-align: center; color: #94a3b8; font-size: 14px;"><i class="fa-solid fa-circle-notch spinner"></i> Rendering treasury books...</p>
+                    </div>
+                </section>
+            </div>
 
-                <div id="error-state" class="status-box error-box hidden">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    <p>Failed to fetch dynamic project profiles.</p>
-                </div>
+        </div>
 
-                <div id="project-grid" class="project-grid hidden" style="margin-bottom: 24px;">
-                    <!-- Injected via app.js -->
-                </div>
-            </section>
-
-            <!-- SECTION 4: INTERACTIVE VOICE & FEEDBACK FORMS -->
-            <section id="youth-voice" class="center-section-block">
-                <div class="section-header hub-header">
+        <!-- ==========================================
+             RIGHT PANEL: YOUTH VOICE FEEDBACK HUB & AI CHAT DESK (STATIC)
+             ========================================== -->
+        <div class="dashboard-panel side-column" style="background: transparent; border: none; box-shadow: none; overflow: visible;">
+            
+            <!-- SECTION 1: YOUTH VOICE FEEDBACK MODULE -->
+            <section id="youth-voice" class="center-section-block" style="width: 100%;">
+                <div class="section-header hub-header" style="padding-bottom: 12px;">
                     <h2>Youth Voice Hub</h2>
                     <p>Submit your thoughts, suggestions, or ask questions to our officials.</p>
                 </div>
 
                 <div class="form-container">
-                    <!-- FIXED: Added direct style to prevent buttons from squishing or dropping -->
                     <div class="tab-header" style="display: flex; width: 100%; justify-content: space-between; gap: 8px;">
-                        <button id="tab-feedback-btn" class="tab-btn active" onclick="switchTab('feedback')" style="flex: 1; min-width: 120px; white-space: nowrap;">
+                        <button id="tab-feedback-btn" class="tab-btn active" onclick="switchTab('feedback')" style="flex: 1; min-width: 100px; white-space: nowrap; background: #2563eb; color: #ffffff;">
                             <i class="fa-solid fa-comments"></i> Feedback
                         </button>
-                        <button id="tab-contact-btn" class="tab-btn" onclick="switchTab('contact')" style="flex: 1; min-width: 120px; white-space: nowrap;">
-                            <i class="fa-solid fa-envelope"></i> Message Us
+                        <button id="tab-contact-btn" class="tab-btn" onclick="switchTab('contact')" style="flex: 1; min-width: 100px; white-space: nowrap; background: transparent; color: #64748b;">
+                            <i class="fa-solid fa-envelope"></i> Message
                         </button>
                     </div>
 
                     <form id="feedback-form" class="hub-form">
                         <label for="feedback-category">Topic Category</label>
-                        <select id="feedback-category" required>
+                        <select id="feedback-category" required style="background: #ffffff;">
                             <option value="" disabled selected>Select a topic...</option>
-                            <option value="education">Education & Skills Programs</option>
-                            <option value="sports">Health & Sports Tournaments</option>
+                            <option value="education">Education Programs</option>
+                            <option value="sports">Sports Tournaments</option>
                             <option value="environment">Environmental Projects</option>
-                            <option value="general">General Suggestions / Other</option>
+                            <option value="general">General Suggestions</option>
                         </select>
-
                         <label for="feedback-text">Your Thoughts</label>
-                        <textarea id="feedback-text" placeholder="Write suggestions here..." rows="4" required></textarea>
-
+                        <textarea id="feedback-text" placeholder="Write suggestions here..." rows="3" required style="background: #ffffff;"></textarea>
                         <button type="submit" class="submit-btn">Submit Anonymously</button>
                     </form>
 
-                    <!-- Form 2: Direct Contact (Personal Messaging) -->
                     <form id="contact-form" class="hub-form hidden">
-                        <div class="official-email-badge" style="background: var(--brand-blue-light); padding: 0.6rem; border-radius: var(--radius-md); font-size: 0.725rem; color: var(--brand-blue); font-weight: 600; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                            <i class="fa-solid fa-envelope-open-text"></i>
-                            <span>Direct Email: <a href="mailto:skboboncaarosipan@gmail.com" style="color: var(--brand-blue); font-weight: 700; text-decoration: underline;">skboboncaarosipan@gmail.com</a></span>
-                        </div>
-
-                        <label for="contact-name">Your Full Name</label>
-                        <input type="text" id="contact-name" placeholder="Juan Dela Cruz" required>
-
-                        <label for="contact-email">Your Email or Contact Number</label>
-                        <input type="text" id="contact-email" placeholder="0917xxxxxxx" required>
-
-                        <label for="contact-message">Your Message</label>
-                        <textarea id="contact-message" placeholder="Type your message to the council..." rows="3" required></textarea>
-
+                        <label for="contact-name">Full Name</label>
+                        <input type="text" id="contact-name" placeholder="Juan Dela Cruz" required style="background: #ffffff;">
+                        <label for="contact-email">Contact Info</label>
+                        <input type="text" id="contact-email" placeholder="0917xxxxxxx" required style="background: #ffffff;">
+                        <label for="contact-message">Message</label>
+                        <textarea id="contact-message" placeholder="Type your message to the council..." rows="2" required style="background: #ffffff;"></textarea>
                         <button type="submit" class="submit-btn contact-submit">Send Message</button>
                     </form>
 
@@ -202,54 +219,46 @@
                     </div>
                 </div>
             </section>
-        </div>
 
-        <!-- ==========================================
-             RIGHT PANEL: FAQ AI INTERACTIVE CHAT DESK
-             ========================================== -->
-        <section id="ai-assistant" class="dashboard-panel side-column">
-            <div class="section-header ai-header">
-                <h2>SK AI Assistant</h2>
-                <p>Instant answers regarding our schedules, hubs, and programs.</p>
-            </div>
+            <!-- SECTION 2: AI AUTOMATED CHAT ASSISTANT -->
+            <section id="ai-assistant" class="center-section-block" style="width: 100%;">
+                <div class="section-header ai-header" style="padding-bottom: 12px;">
+                    <h2>SK AI Assistant</h2>
+                    <p>Instant answers regarding our schedules, hubs, and programs.</p>
+                </div>
 
-            <div class="chat-container">
-                <div class="chat-header">
-                    <div class="chat-title">
-                        <i class="fa-solid fa-robot"></i>
-                        <div>
-                            <h4>SK Automated FAQ Desk</h4>
-                            <span class="status-indicator">● Online Support</span>
+                <div class="chat-container" style="border-radius: 0;">
+                    <div class="chat-header">
+                        <div class="chat-title">
+                            <i class="fa-solid fa-robot"></i>
+                            <div>
+                                <h4>SK Automated FAQ Desk</h4>
+                                <span class="status-indicator">● Online Support</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <div id="chat-messages" class="chat-messages">
-                    <div class="message ai-message">
-                        Mabuhay! Ask me basic questions about our programs or event schedules below!
+                    <div id="chat-messages" class="chat-messages" style="height: 200px;">
+                        <div class="message ai-message">
+                            Mabuhay! Ask me basic questions about our programs or event schedules below!
+                        </div>
                     </div>
+                    <form id="chat-input-area" class="chat-input-area">
+                        <input type="text" id="user-chat-input" placeholder="Type a keyword..." autocomplete="off" required style="background: #ffffff;">
+                        <button type="submit" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+                    </form>
                 </div>
+            </section>
 
-                <form id="chat-input-area" class="chat-input-area">
-                    <input type="text" id="user-chat-input" placeholder="Type a keyword like 'library'..." autocomplete="off" required>
-                    <button type="submit" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
-                </form>
-            </div>
-        </section>
+        </div>
 
     </main>
 
     <!-- TRUE FULL-WIDTH STATIC BACKGROUND FOOTER BANNER -->
     <footer class="footer-banner immersive-footer">
-        <!-- Static Background Layer -->
         <div class="footer-bg-layer">
             <img src="documentation/slide1.jpg" alt="SK Council Community Backdrop">
         </div>
-        
-        <!-- Dark Protection Overlay Map -->
         <div class="footer-overlay"></div>
-
-        <!-- Foreground Centered Content Layer -->
         <div class="footer-content-wrapper">
             <p class="footer-title">SANGGUNIANG KABATAAN DIARY ENGINE</p>
             <p class="footer-desc">Administered via custom static frontend frameworks dynamically linked to secure cloud spreadsheet database ledgers.</p>
