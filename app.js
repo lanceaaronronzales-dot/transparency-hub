@@ -1,6 +1,3 @@
-/**
- * SK Portal Database Controller Configuration
- */
 const SHEET_ID = '1bkhpqGTzS1_NehWzCEfnpAy5gaz9NZldEIVq7gs04OM'; 
 const SHEET_TAB_NAME = 'Projects';
 const MEMBERS_TAB_NAME = 'Members';
@@ -43,11 +40,13 @@ function navigateCenterView(targetSectionId, activeBtnId) {
         const el = document.getElementById(id);
         if (el) el.style.setProperty('display', id === targetSectionId ? 'block' : 'none', 'important');
     });
+    
+    const selector = document.getElementById('portal-view-selector');
+    if (selector && selector.value !== targetSectionId) {
+        selector.value = targetSectionId;
+    }
 }
 
-/**
- * GLASSMORPHIC SPLIT ANNOUNCEMENTS PIPELINE
- */
 async function fetchLiveAnnouncements() {
     try {
         const response = await fetch(ANNOUNCEMENT_DATA_URL);
@@ -85,7 +84,7 @@ async function fetchLiveAnnouncements() {
                         <span style="background: rgba(255, 255, 255, 0.25); padding: 3px 8px; border-radius: 12px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 4px;">
                             <i class="fa-solid fa-fire-flame-curved"></i> EMERGENCY
                         </span>
-                        <p style="margin: 0; line-height: 1.4;">${alertText}</p>
+                        <p style="margin: 0; line-height: 1.4; text-align: left;">${alertText}</p>
                     </div>
                 `;
             } 
@@ -114,7 +113,7 @@ async function fetchLiveAnnouncements() {
                                 ${alertIcon} ${badgeType}
                             </span>
                         </div>
-                        <p style="margin: 0; font-size: 13px; line-height: 1.5; font-weight: 500; color: rgba(255, 255, 255, 0.95); text-shadow: 0 1px 2px rgba(0,0,0,0.3);">${alertText}</p>
+                        <p style="margin: 0; font-size: 13px; line-height: 1.5; font-weight: 500; color: rgba(255, 255, 255, 0.95); text-shadow: 0 1px 2px rgba(0,0,0,0.3); text-align: left;">${alertText}</p>
                     </div>
                 `;
             }
@@ -358,13 +357,13 @@ function switchTab(targetTab) {
     const feedbackForm = document.getElementById('feedback-form'), contactForm = document.getElementById('contact-form');
     const feedbackBtn = document.getElementById('tab-feedback-btn'), contactBtn = document.getElementById('tab-contact-btn');
     if (targetTab === 'feedback') {
-        if (feedbackForm) feedbackForm.style.setProperty('display', 'block', 'important');
-        if (contactForm) contactForm.style.setProperty('display', 'none', 'important');
+        if (feedbackForm) feedbackForm.classList.remove('hidden');
+        if (contactForm) contactForm.classList.add('hidden');
         if (feedbackBtn) { feedbackBtn.style.background = "#2563eb"; feedbackBtn.style.color = "#ffffff"; }
         if (contactBtn) { contactBtn.style.background = "transparent"; contactBtn.style.color = "#64748b"; }
     } else {
-        if (contactForm) contactForm.style.setProperty('display', 'block', 'important');
-        if (feedbackForm) feedbackForm.style.setProperty('display', 'none', 'important');
+        if (contactForm) contactForm.classList.remove('hidden');
+        if (feedbackForm) feedbackForm.classList.add('hidden');
         if (contactBtn) { contactBtn.style.background = "#2563eb"; contactBtn.style.color = "#ffffff"; }
         if (feedbackBtn) { feedbackBtn.style.background = "transparent"; feedbackBtn.style.color = "#64748b"; }
     }
@@ -378,7 +377,7 @@ function setupFormListeners() {
             e.preventDefault(); const submitBtn = feedbackForm.querySelector('.submit-btn'); submitBtn.innerText = "Submitting..."; submitBtn.disabled = true;
             try {
                 await fetch(FEEDBACK_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ category: document.getElementById('feedback-category').value, text: document.getElementById('feedback-text').value }) });
-                feedbackForm.style.setProperty('display', 'none', 'important'); alertBox.classList.remove('hidden'); alertText.innerText = `Mabuhay! Recorded anonymously.`; feedbackForm.reset();
+                feedbackForm.classList.add('hidden'); alertBox.classList.remove('hidden'); alertText.innerText = `Mabuhay! Recorded anonymously.`; feedbackForm.reset();
             } catch (err) { alertBox.classList.remove('hidden'); alertText.innerText = "Submission error."; }
             finally { submitBtn.innerText = "Submit Anonymously"; submitBtn.disabled = false; }
         });
@@ -386,15 +385,12 @@ function setupFormListeners() {
     if(contactForm) {
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault(); const name = document.getElementById('contact-name').value;
-            feedbackForm.style.setProperty('display', 'none', 'important'); contactForm.style.setProperty('display', 'none', 'important'); alertBox.classList.remove('hidden');
+            feedbackForm.classList.add('hidden'); contactForm.classList.add('hidden'); alertBox.classList.remove('hidden');
             alertText.innerText = `Thank you ${name}! Logged successfully.`; contactForm.reset();
         });
     }
 }
 
-/**
- * 🤖 SMART SIMULATED REASONING CHAT ENGINE (PURE FRONTEND)
- */
 function setupFAQEngine() {
     const chatForm = document.getElementById('chat-input-area'), userInput = document.getElementById('user-chat-input'), chatContainer = document.getElementById('chat-messages');
     if(!chatForm) return;
@@ -404,7 +400,6 @@ function setupFAQEngine() {
         const userQuery = userInput.value.trim(); 
         if (!userQuery) return;
 
-        // 1. Render user message box
         const msg = document.createElement('div'); 
         msg.className = 'message user-message'; 
         msg.innerText = userQuery; 
@@ -412,20 +407,17 @@ function setupFAQEngine() {
         userInput.value = '';
         chatContainer.scrollTop = chatContainer.scrollHeight;
 
-        // 2. Render localized thinking indicator card
         const reply = document.createElement('div'); 
         reply.className = 'message ai-message';
         reply.innerHTML = `<i class="fa-solid fa-circle-notch spinner"></i> Scanning spreadsheet database...`;
         chatContainer.appendChild(reply);
         chatContainer.scrollTop = chatContainer.scrollHeight;
 
-        // Normalize text parameters
         const cleanInput = userQuery.toLowerCase().replace(/[?,.!]/g, '');
         const inputWords = cleanInput.split(/\s+/);
 
         setTimeout(async () => {
             try {
-                // Fetch live announcements and budget strings for local analysis
                 const [annRes, budgetRes] = await Promise.all([
                     fetch(ANNOUNCEMENT_DATA_URL),
                     fetch(BUDGET_DATA_URL)
@@ -438,13 +430,10 @@ function setupFAQEngine() {
 
                 let answer = "I couldn't find a specific program matching that query. Try typing terms like 'assistance', 'deadline', 'sports', or 'chairman'!";
 
-                // DYNAMIC FINANCIAL REASONING SIMULATION TIER
-                // Catches suggestions for shoes, clothing, or material gifts
                 if (cleanInput.includes('shoe') || cleanInput.includes('sapatos') || cleanInput.includes('cloth') || cleanInput.includes('uniform')) {
                     let presentationFund = "₱75,000.00";
                     let wellnessFund = "₱7,500.00";
 
-                    // Dynamically extract values from your real budget tab rows if they exist
                     if (budgetData.length > 1) {
                         const culturalRow = budgetData.find(r => r[0] && r[0].includes('Cultural Presentation'));
                         const wellnessRow = budgetData.find(r => r[0] && r[0].includes('Wellness'));
@@ -458,7 +447,6 @@ function setupFAQEngine() {
                     return;
                 }
 
-                // DIRECTORY TIER
                 if (cleanInput.includes('chair') || cleanInput.includes('leader') || cleanInput.includes('sino') || cleanInput.includes('sec') || cleanInput.includes('treas')) {
                     const res = await fetch(COUNCIL_DATA_URL);
                     if (res.ok) {
@@ -479,10 +467,8 @@ function setupFAQEngine() {
                     }
                 }
 
-                // ANNOUNCEMENT & FUZZY ELIGIBILITY APPLICATION TIER
                 if (annRes.ok) {
                     const cleanRows = parseCSV(await annRes.text());
-                    // Context evaluation: default fallback flag if eligibility phrases are used
                     const isLookingForQualifications = inputWords.some(w => ['qualified', 'eligible', 'pwede', 'qualify', 'apply', 'requirement', '16', '10', 'grade', 'years'].includes(w));
                     
                     for(let i = 1; i < cleanRows.length; i++) {
