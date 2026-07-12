@@ -38,7 +38,6 @@ function cleanDriveImageUrl(url) {
 }
 
 function navigateCenterView(targetSectionId, activeBtnId) {
-    // Fixed navigation array to include the dedicated documentation view
     const sections = ['view-home', 'view-docs', 'view-pipeline', 'view-budget'];
     sections.forEach(id => {
         const el = document.getElementById(id);
@@ -70,7 +69,6 @@ async function fetchLiveAnnouncements() {
         if (emergencyBar) emergencyBar.innerHTML = '';
         if (heroAlertsAside) heroAlertsAside.innerHTML = '';
 
-        // 1. EVALUATE COLUMN A ENTIRE LOG STREAM
         for (let i = 1; i < cleanRows.length; i++) {
             const row = cleanRows[i];
             if (!row || !row[0]) continue;
@@ -80,7 +78,6 @@ async function fetchLiveAnnouncements() {
             
             if (alertText === "" || alertText === "N/A" || alertText.toLowerCase() === "none") continue;
 
-            // TRACK CRITICAL EVENTS (ROUTED TO THE TOP BAR STACK)
             if (badgeType === 'EMERGENCY') {
                 hasTopEmergency = true;
                 emergencyBar.innerHTML += `
@@ -92,7 +89,6 @@ async function fetchLiveAnnouncements() {
                     </div>
                 `;
             } 
-            // TRACK SECONDARY EVENTS (ROUTED TO THE FROSTED GLASS SIDEBAR BAR CARD PANEL)
             else if (heroAlertsAside) {
                 let glassBorderColor = 'rgba(255, 255, 255, 0.2)';
                 let labelBgColor = 'rgba(255, 255, 255, 0.15)';
@@ -124,7 +120,6 @@ async function fetchLiveAnnouncements() {
             }
         }
 
-        // CONTROL TOP STICKY BAR VISIBILITY ACTIONS
         if (hasTopEmergency && emergencyBar) {
             emergencyBar.style.setProperty('display', 'block', 'important');
             document.body.style.paddingTop = `${emergencyBar.offsetHeight}px`;
@@ -133,7 +128,6 @@ async function fetchLiveAnnouncements() {
             document.body.style.paddingTop = '0px';
         }
 
-        // 2. PROCESS BULLETIN BOARD POSTINGS
         if (bulletinContainer) {
             bulletinContainer.innerHTML = '';
             let bulletinCount = 0;
@@ -304,9 +298,8 @@ async function fetchLiveDocumentationFeed() {
         feedContainer.innerHTML = '';
         for (let i = 1; i < cleanRows.length; i++) {
             const row = cleanRows[i]; 
-            if (!row || (!row[0] && !row[1])) continue; // Skip truly empty lines safely
+            if (!row || (!row[0] && !row[1])) continue; 
             
-            // If the URL cell is blank or placeholder text, use a fallback local image framework or layout block
             const rawImg = (row[0] && !row[0].includes('[Paste')) ? cleanDriveImageUrl(row[0]) : '';
             const caption = row[1] || 'No caption provided.';
             const dateStr = row[2] || 'Recent Update';
@@ -333,6 +326,7 @@ async function fetchLiveDocumentationFeed() {
         feedContainer.innerHTML = `<p style="text-align: center; font-size: 14px; color: #ef4444;">Failed to load documentation logs.</p>`;
     }
 }
+
 async function fetchLiveBudgetLedger() {
     const budgetGrid = document.getElementById('budget-ledger-grid');
     if (!budgetGrid) return;
@@ -398,122 +392,83 @@ function setupFormListeners() {
     }
 }
 
+/**
+ * 🤖 ULTIMATE NATURAL LANGUAGE PROCESSING FAQ CHAT ENGINE
+ */
 function setupFAQEngine() {
     const chatForm = document.getElementById('chat-input-area'), userInput = document.getElementById('user-chat-input'), chatContainer = document.getElementById('chat-messages');
     if(!chatForm) return;
 
     chatForm.addEventListener('submit', async function(e) {
         e.preventDefault(); 
-        const rawText = userInput.value.trim(); 
-        if (!rawText) return;
+        const userQuery = userInput.value.trim(); 
+        if (!userQuery) return;
 
-        // 1. Render the user's message card onto the screen
+        // 1. Render user message box
         const msg = document.createElement('div'); 
         msg.className = 'message user-message'; 
-        msg.innerText = rawText; 
+        msg.innerText = userQuery; 
         chatContainer.appendChild(msg); 
         userInput.value = '';
         chatContainer.scrollTop = chatContainer.scrollHeight;
 
-        // Show a quick typing indicator reply
+        // 2. Render localized reasoning/thinking card
         const reply = document.createElement('div'); 
         reply.className = 'message ai-message';
-        reply.innerHTML = `<i class="fa-solid fa-ellipsis fa-fade"></i> Checking repository books...`;
+        reply.innerHTML = `<i class="fa-solid fa-circle-notch spinner"></i> Analyzing website context...`;
         chatContainer.appendChild(reply);
         chatContainer.scrollTop = chatContainer.scrollHeight;
 
-        // Clean text and break sentence into individual keyword tokens
-        const cleanInput = rawText.toLowerCase().replace(/[?,.!]/g, '');
-        const inputWords = cleanInput.split(/\s+/);
-        
-        let answer = "I couldn't find a specific update for that keyword. Try typing simpler terms like 'assistance', 'deadline', 'sports', or 'chairman'!";
-
         try {
-            // LOGIC TIER A: Check for directory or council lookup words first
-            const directoryKeywords = ['chair', 'sino', 'leader', 'kapitan', 'sec', 'treas', 'kagawad', 'sk', 'official'];
-            const needsDirectory = inputWords.some(word => directoryKeywords.some(kw => word.includes(kw)));
+            // 3. Compile ALL repository sheet values to form the backend context prompt
+            const [annText, councilText, projText, budgetText] = await Promise.all([
+                fetch(ANNOUNCEMENT_DATA_URL).then(r => r.text().catch(() => '')),
+                fetch(COUNCIL_DATA_URL).then(r => r.text().catch(() => '')),
+                fetch(DATA_URL).then(r => r.text().catch(() => '')),
+                fetch(BUDGET_DATA_URL).then(r => r.text().catch(() => ''))
+            ]);
 
-            if (needsDirectory) {
-                const res = await fetch(COUNCIL_DATA_URL);
-                if (res.ok) {
-                    const cleanRows = parseCSV(await res.text());
-                    let matches = [];
-                    for(let i = 1; i < cleanRows.length; i++) {
-                        const row = cleanRows[i];
-                        if(row && row[0]) {
-                            const role = row[0].toLowerCase();
-                            const name = row[1].toLowerCase();
-                            if (inputWords.some(word => role.includes(word) || word.includes(role) || name.includes(word))) {
-                                matches.push(`• **${row[0]}**: ${row[1]} (${row[2] || 'All Puroks'})`);
-                            }
-                        }
-                    }
-                    if (matches.length > 0) {
-                        answer = `Here are the matching council profiles found:\n\n${matches.join('\n')}`;
-                        reply.innerHTML = answer.replace(/\n/g, '<br>');
-                        return;
-                    }
-                }
-            }
+            const systemContext = `
+You are the official SK Automated FAQ Desk assistant for Barangay Bobon Caarosipan. 
+Your task is to answer user questions using ONLY the official portal data provided below. 
+Use your reasoning skills to connect details (e.g., understand that a 16-year-old or a Grade 10 student falls under high school, or calculate if a project fits within the remaining budget parameters). Be welcoming, clear, and direct.
 
-            // LOGIC TIER B: Scan Announcements (Includes hidden Column I context handler)
-            const annRes = await fetch(ANNOUNCEMENT_DATA_URL);
-            if (annRes.ok) {
-                const cleanRows = parseCSV(await annRes.text());
-                for(let i = 1; i < cleanRows.length; i++) {
-                    const row = cleanRows[i];
-                    if (!row) continue;
-                    
-                    const title = row[2] ? row[2].toLowerCase() : '';
-                    const details = row[3] ? row[3].toLowerCase() : '';
-                    // Read the hidden 9th column (Index 8 in JavaScript arrays)
-                    const extraDetails = row[8] ? row[8].toLowerCase() : '';
-                    
-                    // Match if user types words overlapping title, main details, or hidden details
-                    const isMatch = inputWords.some(word => 
-                        title.includes(word) || details.includes(word) || extraDetails.includes(word) ||
-                        (word.startsWith('assit') && (title.includes('assistance') || details.includes('assistance'))) ||
-                        (word.includes('deadlin') && title.includes('assistance'))
-                    );
+--- OFFICIAL SANGGUNIANG KABATAAN DATABASE DATA ---
+[ANNOUNCEMENTS & ASSISTANCE PROGRAMS]:
+${annText}
 
-                    if (isMatch && row[2]) {
-                        const displayExtra = row[8] ? `\n\n💡 **Additional Info:**\n${row[8]}` : '';
-                        answer = `📢 **${row[2]}**\n\n${row[3] || ''}${displayExtra}\n\n📅 **${row[5] || 'Date'}:** ${row[4] || 'N/A'}\n⏰ **Time:** ${row[6] || 'N/A'}\n📍 **Venue:** ${row[7] || 'N/A'}`;
-                        reply.innerHTML = answer.replace(/\n/g, '<br>');
-                        return;
-                    }
-                }
-            }
+[COUNCIL MEMBERS DIRECTORY]:
+${councilText}
 
-            // LOGIC TIER C: Scan Projects Tab if announcement didn't catch anything
-            const projRes = await fetch(DATA_URL);
-            if (projRes.ok) {
-                const cleanRows = parseCSV(await projRes.text());
-                for(let i = 1; i < cleanRows.length; i++) {
-                    const row = cleanRows[i];
-                    if (!row || !row[0]) continue;
-                    
-                    const projTitle = row[0].toLowerCase();
-                    const projDetails = row[3] ? row[3].toLowerCase() : '';
+[PROJECT PIPELINE TRACKER]:
+${projText}
 
-                    if (inputWords.some(word => projTitle.includes(word) || projDetails.includes(word))) {
-                        answer = `📊 **Project:** ${row[0]}\n📌 **Status:** ${row[2] || 'Planning'}\n📅 **Target Execution:** ${row[1] || 'N/A'}\n\n📝 **Details:** ${row[3] || 'No description logged.'}`;
-                        reply.innerHTML = answer.replace(/\n/g, '<br>');
-                        return;
-                    }
-                }
-            }
+[FINANCIAL LEDGER & BUDGETS]:
+${budgetText}
+--------------------------------------------------
+
+User Question: "${userQuery}"
+Answer:`;
+
+            // 4. Send structured context packet payload to backend processing endpoint route
+            const aiResponse = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: systemContext })
+            });
+
+            if (!aiResponse.ok) throw new Error("API Route unreachable");
+            const resultData = await aiResponse.json();
+            
+            // 5. Inject processed natural reasoning answer directly into view container block
+            reply.innerHTML = resultData.reply.replace(/\n/g, '<br>');
 
         } catch (err) {
             console.error(err);
-            answer = "Sorry, I hit a slight glitch connecting to the spreadsheet database logs.";
+            reply.innerHTML = "I ran into a glitch processing that context request. Please ensure your backend server API route is live and connected!";
         }
-
-        // Output final answer fallback
-        setTimeout(() => {
-            reply.innerHTML = answer.replace(/\n/g, '<br>');
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }, 400);
+        
+        chatContainer.scrollTop = chatContainer.scrollHeight;
     });
 }
 
