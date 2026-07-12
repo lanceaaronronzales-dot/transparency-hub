@@ -37,118 +37,98 @@ function cleanDriveImageUrl(url) {
     return url;
 }
 
-/**
- * Center Panel Navigation Controller
- */
 function navigateCenterView(targetSectionId, activeBtnId) {
     const sections = ['view-home', 'view-pipeline', 'view-budget'];
     sections.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.setProperty('display', id === targetSectionId ? 'block' : 'none', 'important');
     });
-
-    const navButtons = ['nav-home-btn', 'nav-pipeline-btn', 'nav-budget-btn'];
-    navButtons.forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) {
-            if (id === activeBtnId) {
-                btn.style.background = 'var(--brand-blue, #2563eb)';
-                btn.style.color = '#ffffff';
-            } else {
-                btn.style.background = '#f1f5f9';
-                btn.style.color = 'var(--text-secondary, #334155)';
-            }
-        }
-    });
 }
 
 /**
- * Fetches Facebook-style clean grid posts from the Documentation tab
+ * Renders a structured layout for the Bulletin Board using separate data cells
  */
-async function fetchLiveDocumentationFeed() {
-    const feedContainer = document.getElementById('documentation-feed');
-    if (!feedContainer) return;
+function processGeneralBulletin(title, details, dateVal, dateLabel, timeVal, venueVal) {
+    const bulletinContainer = document.getElementById('general-bulletin-container');
+    if (!bulletinContainer) return;
 
-    try {
-        const response = await fetch(DOCS_DATA_URL);
-        if (!response.ok) throw new Error("Could not access documentation ledger.");
-        const dataText = await response.text();
-        const cleanRows = parseCSV(dataText);
-
-        if (cleanRows.length <= 1) {
-            feedContainer.innerHTML = `<p style="font-size: 14px; color: #94a3b8; text-align: center; padding: 20px;">No community documentation posts logged yet.</p>`;
-            return;
-        }
-
-        feedContainer.innerHTML = '';
-        for (let i = 1; i < cleanRows.length; i++) {
-            const row = cleanRows[i];
-            if (!row || !row[0]) continue;
-
-            const rawImg = cleanDriveImageUrl(row[0]);
-            const caption = row[1] || 'No description provided.';
-            const dateStr = row[2] || 'Recent Activity';
-
-            feedContainer.innerHTML += `
-                <div class="fb-post-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 24px; overflow: hidden; box-shadow: var(--shadow-sm);">
-                    <div style="display: flex; align-items: center; gap: 10px; padding: 16px; border-bottom: 1px solid #f1f5f9;">
-                        <img src="Images/SK LOGO.jpg" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #e2e8f0;">
-                        <div>
-                            <h4 style="font-size: 14px; font-weight: 700; color: #0f172a; margin: 0;">Sangguniang Kabataan</h4>
-                            <span style="font-size: 11px; color: #94a3b8; display: block;"><i class="fa-solid fa-earth-asia"></i> ${dateStr}</span>
-                        </div>
-                    </div>
-                    <div style="padding: 16px; font-size: 14px; color: #334155; line-height: 1.6;">${caption}</div>
-                    <div style="width: 100%; background: #f8fafc; border-top: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: center;">
-                        <img src="${rawImg}" style="width: 100%; max-height: 450px; object-fit: cover;" alt="SK Activity Image">
-                    </div>
-                </div>
-            `;
-        }
-    } catch (err) {
-        console.error(err);
-        feedContainer.innerHTML = `<p style="font-size: 13px; color: #ef4444; text-align: center;">Failed to render posts.</p>`;
+    if (!title || title.trim() === "" || title.trim() === "N/A") {
+        bulletinContainer.innerHTML = `<p style="font-size: 14px; color: #94a3b8; font-style: italic; text-align: center;">No active council announcements posted at this moment.</p>`;
+        return;
     }
+
+    // Determine an accent color badge depending on the label chosen (Deadline = Red, Meeting = Amber, etc.)
+    let labelBadgeColor = '#2563eb'; 
+    let labelBg = '#eff6ff';
+    const cleanLabel = dateLabel ? dateLabel.toLowerCase() : '';
+    
+    if (cleanLabel.includes('deadline') || cleanLabel.includes('due')) {
+        labelBadgeColor = '#dc2626'; labelBg = '#fef2f2';
+    } else if (cleanLabel.includes('meeting') || cleanLabel.includes('schedule')) {
+        labelBadgeColor = '#d97706'; labelBg = '#fffbeb';
+    } else if (cleanLabel.includes('event') || cleanLabel.includes('program')) {
+        labelBadgeColor = '#16a34a'; labelBg = '#f0fdf4';
+    }
+
+    bulletinContainer.innerHTML = `
+        <div style="background: #ffffff; border-radius: 8px; display: flex; flex-direction: column; gap: 16px;">
+            <div>
+                <h3 style="font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 8px;">${title}</h3>
+                <p style="font-size: 14px; color: #475569; line-height: 1.6; font-weight: 400; margin: 0;">${details}</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; border-top: 1px dashed #e2e8f0; padding-top: 16px; margin-top: 4px;">
+                ${dateVal ? `
+                <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 13px;">
+                    <i class="fa-regular fa-calendar" style="color: #64748b; margin-top: 3px; width: 14px;"></i>
+                    <div>
+                        <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: ${labelBg}; color: ${labelBadgeColor}; margin-bottom: 2px;">${dateLabel || 'Date'}</span>
+                        <strong style="display: block; color: #1e293b;">${dateVal}</strong>
+                    </div>
+                </div>` : ''}
+                
+                ${timeVal ? `
+                <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 13px;">
+                    <i class="fa-regular fa-clock" style="color: #64748b; margin-top: 3px; width: 14px;"></i>
+                    <div>
+                        <span style="display: block; font-size: 11px; color: #94a3b8; font-weight: 600; text-transform: uppercase;">Time Schedule</span>
+                        <strong style="color: #1e293b;">${timeVal}</strong>
+                    </div>
+                </div>` : ''}
+                
+                ${venueVal ? `
+                <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 13px;">
+                    <i class="fa-solid fa-location-dot" style="color: #64748b; margin-top: 3px; width: 14px;"></i>
+                    <div>
+                        <span style="display: block; font-size: 11px; color: #94a3b8; font-weight: 600; text-transform: uppercase;">Venue Location</span>
+                        <strong style="color: #1e293b;">${venueVal}</strong>
+                    </div>
+                </div>` : ''}
+            </div>
+        </div>
+    `;
 }
 
-/**
- * Fetches allocation rows from your budget tab ledger
- */
-async function fetchLiveBudgetLedger() {
-    const budgetGrid = document.getElementById('budget-ledger-grid');
-    if (!budgetGrid) return;
-
+async function fetchLiveAnnouncements() {
     try {
-        const response = await fetch(BUDGET_DATA_URL);
+        const response = await fetch(ANNOUNCEMENT_DATA_URL);
         if (!response.ok) return;
         const dataText = await response.text();
         const cleanRows = parseCSV(dataText);
-
-        if (cleanRows.length <= 1) {
-            budgetGrid.innerHTML = `<p style="color: #94a3b8; font-size: 14px; text-align: center; padding: 20px;">No public financial logs updated yet.</p>`;
-            return;
-        }
-
-        budgetGrid.innerHTML = '';
-        for (let i = 1; i < cleanRows.length; i++) {
-            const row = cleanRows[i];
-            if (!row || !row[0]) continue;
-
-            const title = row[0];
-            const allocated = row[1] || '0.00';
-            const spent = row[2] || '0.00';
-            const remaining = row[3] || '0.00';
-
-            budgetGrid.innerHTML += `
-                <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; box-shadow: var(--shadow-sm);">
-                    <h3 style="font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 12px; border-bottom: 1px dashed #f1f5f9; padding-bottom: 8px;">${title}</h3>
-                    <div style="display: flex; flex-direction: column; gap: 6px; font-size: 13px;">
-                        <div style="display: flex; justify-content: space-between;"><span style="color: #64748b;">Allocated Budget:</span> <strong style="color: #0f172a;">₱${allocated}</strong></div>
-                        <div style="display: flex; justify-content: space-between;"><span style="color: #64748b;">Total Expenses:</span> <strong style="color: #dc2626;">₱${spent}</strong></div>
-                        <div style="display: flex; justify-content: space-between; border-top: 1px solid #f1f5f9; padding-top: 6px; margin-top: 4px;"><span style="color: #64748b; font-weight: 600;">Remaining Balance:</span> <strong style="color: #16a34a; font-size: 14px;">₱${remaining}</strong></div>
-                    </div>
-                </div>
-            `;
+        if (cleanRows.length > 1) {
+            const row = cleanRows[1];
+            // Render Emergency Alert
+            processEmergencyAlert(row[0] || "", row[1] || "");
+            
+            // Render structured Bulletin Board from separate columns
+            processGeneralBulletin(
+                row[2] || "", // Title
+                row[3] || "", // Details
+                row[4] || "", // Date Value
+                row[5] || "", // Date Label
+                row[6] || "", // Time Value
+                row[7] || ""  // Venue/Place
+            );
         }
     } catch (err) { console.error(err); }
 }
@@ -171,33 +151,6 @@ function processEmergencyAlert(alertText, badgeType) {
             badgeLabel.innerHTML = `${iconMarkup} ${cleanBadge}`;
         }
     }
-}
-
-function processGeneralBulletin(bulletinText) {
-    const bulletinContainer = document.getElementById('general-bulletin-container');
-    if (!bulletinContainer) return;
-    if (!bulletinText || bulletinText.trim() === "" || bulletinText.trim() === "N/A") {
-        bulletinContainer.innerHTML = `<p style="font-size: 14px; color: #94a3b8; font-style: italic; text-align: center;">No active council announcements posted at this moment.</p>`;
-    } else {
-        bulletinContainer.innerHTML = `
-            <div style="background: #f8fafc; border-left: 4px solid #2563eb; padding: 16px; border-radius: 4px;">
-                <p style="font-size: 14px; color: #334155; line-height: 1.6; font-weight: 500;">${bulletinText}</p>
-            </div>
-        `;
-    }
-}
-
-async function fetchLiveAnnouncements() {
-    try {
-        const response = await fetch(ANNOUNCEMENT_DATA_URL);
-        if (!response.ok) return;
-        const dataText = await response.text();
-        const cleanRows = parseCSV(dataText);
-        if (cleanRows.length > 1) {
-            processEmergencyAlert(cleanRows[1][0] || "", cleanRows[1][1] || "");
-            processGeneralBulletin(cleanRows[1][2] || "");
-        }
-    } catch (err) { console.error(err); }
 }
 
 async function fetchLiveProjects() {
@@ -285,6 +238,63 @@ async function fetchLiveCouncil() {
         }
         if (loadingIndicator) loadingIndicator.classList.add('hidden');
         if (gridContainer) gridContainer.classList.remove('hidden');
+    } catch (err) { console.error(err); }
+}
+
+async function fetchLiveDocumentationFeed() {
+    const feedContainer = document.getElementById('documentation-feed');
+    if (!feedContainer) return;
+    try {
+        const response = await fetch(DOCS_DATA_URL);
+        if (!response.ok) return;
+        const dataText = await response.text();
+        const cleanRows = parseCSV(dataText);
+        if (cleanRows.length <= 1) {
+            feedContainer.innerHTML = `<p style="font-size: 14px; color: #94a3b8; text-align: center; padding: 20px;">No community documentation posts logged yet.</p>`;
+            return;
+        }
+        feedContainer.innerHTML = '';
+        for (let i = 1; i < cleanRows.length; i++) {
+            const row = cleanRows[i]; if (!row || !row[0]) continue;
+            const rawImg = cleanDriveImageUrl(row[0]), caption = row[1] || '', dateStr = row[2] || 'Recent';
+            feedContainer.innerHTML += `
+                <div class="fb-post-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 24px; overflow: hidden; box-shadow: var(--shadow-sm);">
+                    <div style="display: flex; align-items: center; gap: 10px; padding: 16px; border-bottom: 1px solid #f1f5f9;">
+                        <img src="Images/SK LOGO.jpg" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                        <div><h4 style="font-size: 14px; font-weight: 700; color: #0f172a; margin: 0;">Sangguniang Kabataan</h4><span style="font-size: 11px; color: #94a3b8; display: block;"><i class="fa-solid fa-earth-asia"></i> ${dateStr}</span></div>
+                    </div>
+                    <div style="padding: 16px; font-size: 14px; color: #334155; line-height: 1.6;">${caption}</div>
+                    <div style="width: 100%; background: #f8fafc; display: flex; align-items: center; justify-content: center;"><img src="${rawImg}" style="width: 100%; max-height: 450px; object-fit: cover;"></div>
+                </div>
+            `;
+        }
+    } catch (err) { console.error(err); }
+}
+
+async function fetchLiveBudgetLedger() {
+    const budgetGrid = document.getElementById('budget-ledger-grid');
+    if (!budgetGrid) return;
+    try {
+        const response = await fetch(BUDGET_DATA_URL);
+        if (!response.ok) return;
+        const dataText = await response.text();
+        const cleanRows = parseCSV(dataText);
+        if (cleanRows.length <= 1) return;
+        budgetGrid.innerHTML = '';
+        for (let i = 1; i < cleanRows.length; i++) {
+            const row = cleanRows[i]; if (!row || !row[0]) continue;
+            const title = row[0], allocated = row[1] || '0.00', spent = row[2] || '0.00', remaining = row[3] || '0.00';
+            budgetGrid.innerHTML += `
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; box-shadow: var(--shadow-sm);">
+                    <h3 style="font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 12px; border-bottom: 1px dashed #f1f5f9; padding-bottom: 8px;">${title}</h3>
+                    <div style="display: flex; flex-direction: column; gap: 6px; font-size: 13px;">
+                        <div style="display: flex; justify-content: space-between;"><span style="color: #64748b;">Allocated Budget:</span> <strong style="color: #0f172a;">₱${allocated}</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span style="color: #64748b;">Total Expenses:</span> <strong style="color: #dc2626;">₱${spent}</strong></div>
+                        <div style="display: flex; justify-content: space-between; border-top: 1px solid #f1f5f9; padding-top: 6px; margin-top: 4px;"><span style="color: #64748b; font-weight: 600;">Remaining Balance:</span> <strong style="color: #16a34a; font-size: 14px;">₱${remaining}</strong></div>
+                    </div>
+                </div>
+            `;
+        }
     } catch (err) { console.error(err); }
 }
 
