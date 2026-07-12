@@ -151,11 +151,12 @@
                 </div>
 
                 <div class="form-container">
-                    <div class="tab-header">
-                        <button id="tab-feedback-btn" class="tab-btn active" onclick="switchTab('feedback')">
+                    <!-- FIXED: Added direct style to prevent buttons from squishing or dropping -->
+                    <div class="tab-header" style="display: flex; width: 100%; justify-content: space-between; gap: 8px;">
+                        <button id="tab-feedback-btn" class="tab-btn active" onclick="switchTab('feedback')" style="flex: 1; min-width: 120px; white-space: nowrap;">
                             <i class="fa-solid fa-comments"></i> Feedback
                         </button>
-                        <button id="tab-contact-btn" class="tab-btn" onclick="switchTab('contact')">
+                        <button id="tab-contact-btn" class="tab-btn" onclick="switchTab('contact')" style="flex: 1; min-width: 120px; white-space: nowrap;">
                             <i class="fa-solid fa-envelope"></i> Message Us
                         </button>
                     </div>
