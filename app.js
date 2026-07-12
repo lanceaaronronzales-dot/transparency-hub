@@ -89,11 +89,10 @@ async function fetchLiveAnnouncements() {
         const dataText = await response.text();
         const cleanRows = parseCSV(dataText);
 
-        // Row 1 is headers. Real announcement data is in Row 2 (index 1)
         if (cleanRows.length > 1) {
-            const emergencyText = cleanRows[1][0] || ""; // Column A
-            const badgeType = cleanRows[1][1] || "";     // Column B
-            const generalText = cleanRows[1][2] || "";   // Column C
+            const emergencyText = cleanRows[1][0] || ""; 
+            const badgeType = cleanRows[1][1] || "";     
+            const generalText = cleanRows[1][2] || "";   
 
             processEmergencyAlert(emergencyText, badgeType);
             processGeneralBulletin(generalText);
@@ -131,8 +130,6 @@ async function fetchLiveProjects() {
         if (gridContainer) gridContainer.innerHTML = '';
 
         let projectCount = 0;
-        
-        // FIXED: Loops through EVERY project row starting immediately at row 2 (index 1)
         for (let i = 1; i < cleanRows.length; i++) { 
             const row = cleanRows[i];
             if (!row || row.length < 3 || !row[0]) continue; 
@@ -269,17 +266,28 @@ async function fetchLiveCouncil() {
     } catch (err) { console.error(err); }
 }
 
+/**
+ * FIXED: Cleanly handles tab transitions without altering predefined HTML class layout configurations
+ */
 function switchTab(targetTab) {
-    const feedbackForm = document.getElementById('feedback-form'), contactForm = document.getElementById('contact-form');
-    const feedbackBtn = document.getElementById('tab-feedback-btn'), contactBtn = document.getElementById('tab-contact-btn');
+    const feedbackForm = document.getElementById('feedback-form');
+    const contactForm = document.getElementById('contact-form');
+    const feedbackBtn = document.getElementById('tab-feedback-btn');
+    const contactBtn = document.getElementById('tab-contact-btn');
     const alertBox = document.getElementById('form-alert');
-    if(alertBox) alertBox.classList.add('hidden');
+    
+    if (alertBox) alertBox.classList.add('hidden');
+
     if (targetTab === 'feedback') {
-        if(feedbackForm) feedbackForm.classList.remove('hidden'); if(contactForm) contactForm.classList.add('hidden');
-        if(feedbackBtn) feedbackBtn.classList.add('active'); if(contactBtn) contactBtn.classList.remove('active');
+        if (feedbackForm) feedbackForm.classList.remove('hidden');
+        if (contactForm) contactForm.classList.add('hidden');
+        if (feedbackBtn) feedbackBtn.classList.add('active');
+        if (contactBtn) contactBtn.classList.remove('active');
     } else {
-        if(contactForm) contactForm.classList.remove('hidden'); if(feedbackForm) feedbackForm.classList.add('hidden');
-        if(contactBtn) contactBtn.className = 'active'; if(feedbackBtn) feedbackBtn.classList.remove('active');
+        if (contactForm) contactForm.classList.remove('hidden');
+        if (feedbackForm) feedbackForm.classList.add('hidden');
+        if (contactBtn) contactBtn.classList.add('active');
+        if (feedbackBtn) feedbackBtn.classList.remove('active');
     }
 }
 
