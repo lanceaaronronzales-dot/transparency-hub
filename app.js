@@ -5,6 +5,7 @@ const SHEET_ID = '1bkhpqGTzS1_NehWzCEfnpAy5gaz9NZldEIVq7gs04OM';
 const SHEET_TAB_NAME = 'Projects';
 const MEMBERS_TAB_NAME = 'Members';
 const SLIDESHOW_TAB_NAME = 'Slideshow';
+const ANNOUNCEMENT_TAB_NAME = 'Announcement';
 
 // Auto-generated cache-buster to instantly pull live updates from your Google Sheet
 const cacheBuster = `&cb=${new Date().getTime()}`;
@@ -12,6 +13,7 @@ const cacheBuster = `&cb=${new Date().getTime()}`;
 const DATA_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_TAB_NAME}${cacheBuster}`;
 const COUNCIL_DATA_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${MEMBERS_TAB_NAME}${cacheBuster}`;
 const SLIDESHOW_DATA_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SLIDESHOW_TAB_NAME}${cacheBuster}`;
+const ANNOUNCEMENT_DATA_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${ANNOUNCEMENT_TAB_NAME}${cacheBuster}`;
 
 // Your Active Google Apps Script Web App Deployment URL
 const FEEDBACK_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxiDIQb7zpIFdbbHwH9gld2nbXDhn7hUU5ls9oY2NKznAGMbVif4Wmqc0obtKTU79_R/exec';
@@ -28,12 +30,12 @@ function parseCSV(text) {
 }
 
 /**
- * Controls the top-level high-priority Emergency Banner layout (Adaptive ID Matching)
+ * Controls the top-level high-priority Emergency Banner layout
  */
-function processEmergencyAlert(alertText) {
-    // Tries finding the new ID first, falls back to old ID if missing
+function processEmergencyAlert(alertText, badgeType) {
     const emergencyBar = document.getElementById('emergency-announcement') || document.getElementById('sticky-announcement');
     const emergencyPara = document.getElementById('emergency-text') || document.getElementById('announcement-text');
+    const badgeLabel = emergencyBar ? emergencyBar.querySelector('.announcement-badge') : null;
 
     if (!emergencyBar) return;
 
@@ -43,7 +45,19 @@ function processEmergencyAlert(alertText) {
     } else {
         emergencyBar.style.setProperty('display', 'flex', 'important');
         emergencyBar.classList.remove('hidden');
+        
         if (emergencyPara) emergencyPara.innerText = alertText;
+        
+        if (badgeLabel) {
+            const cleanBadge = badgeType && badgeType.trim() !== "" ? badgeType.toUpperCase() : "URGENT";
+            let iconMarkup = '<i class="fa-solid fa-triangle-exclamation"></i>';
+            if (cleanBadge === 'NOTICE' || cleanBadge === 'INFO') {
+                iconMarkup = '<i class="fa-solid fa-circle-info"></i>';
+            } else if (cleanBadge === 'EMERGENCY') {
+                iconMarkup = '<i class="fa-solid fa-fire-flame-curved"></i>';
+            }
+            badgeLabel.innerHTML = `${iconMarkup} ${cleanBadge}`;
+        }
     }
 }
 
@@ -55,7 +69,7 @@ function processGeneralBulletin(bulletinText) {
     if (!bulletinContainer) return;
 
     if (!bulletinText || bulletinText.trim() === "" || bulletinText.trim() === "N/A") {
-        bulletinContainer.innerHTML = `<p style="font-size: 14px; color: #94a3b8; font-style: italic;">No active council announcements posted at this moment.</p>`;
+        bulletinContainer.innerHTML = `<p style="font-size: 14px; color: #94a3b8; font-style: italic; text-align: center;">No active council announcements posted at this moment.</p>`;
     } else {
         bulletinContainer.innerHTML = `
             <div style="background: #f8fafc; border-left: 4px solid #2563eb; padding: 16px; border-radius: 4px;">
@@ -66,7 +80,36 @@ function processGeneralBulletin(bulletinText) {
 }
 
 /**
- * Pulls, segregates, and renders announcements and project trackers together
+ * Fetches data from the separate Announcement tab
+ */
+async function fetchLiveAnnouncements() {
+    try {
+        const response = await fetch(ANNOUNCEMENT_DATA_URL);
+        if (!response.ok) throw new Error("Announcement tab check failed.");
+        const dataText = await response.text();
+        const cleanRows = parseCSV(dataText);
+
+        if (cleanRows.length > 1) {
+            // Row 2 Column A (Emergency Message), Column B (Badge Type), Column C (General Bulletin)
+            const emergencyText = cleanRows[1][0] || "";
+            const badgeType = cleanRows[1][1] || "";
+            const generalText = cleanRows[1][2] || "";
+
+            processEmergencyAlert(emergencyText, badgeType);
+            processGeneralBulletin(generalText);
+        } else {
+            processEmergencyAlert("", "");
+            processGeneralBulletin("");
+        }
+    } catch (err) {
+        console.error("Announcement Engine Error:", err);
+        processEmergencyAlert("", "");
+        processGeneralBulletin("");
+    }
+}
+
+/**
+ * Pulls and renders the project trackers dynamically from the clean Projects tab
  */
 async function fetchLiveProjects() {
     const gridContainer = document.getElementById('project-grid');
@@ -81,25 +124,15 @@ async function fetchLiveProjects() {
         const cleanRows = parseCSV(dataText);
 
         if (cleanRows.length <= 1) {
-            processEmergencyAlert("");
-            processGeneralBulletin("");
             if (loadingIndicator) loadingIndicator.innerHTML = `<p style="font-size: 12px; color: #94a3b8;">No records posted currently.</p>`;
             return;
         }
 
-        // 1. Extract Emergency Alert from Row 2, Column A (index [1][0])
-        const rawEmergency = cleanRows[1] ? cleanRows[1][0] : "";
-        processEmergencyAlert(rawEmergency);
-
-        // 2. Extract General Announcement from Row 3, Column A (index [2][0])
-        const rawGeneral = cleanRows[2] ? cleanRows[2][0] : "";
-        processGeneralBulletin(rawGeneral);
-
         if (gridContainer) gridContainer.innerHTML = '';
 
-        // 3. Project pipeline loop now starts safely from Row 4 (index i = 3) downwards!
         let projectCount = 0;
-        for (let i = 3; i < cleanRows.length; i++) { 
+        // Starts beautifully at row 2 (index 1) since the tab is completely pure!
+        for (let i = 1; i < cleanRows.length; i++) { 
             const row = cleanRows[i];
             if (!row || row.length < 3 || !row[0]) continue; 
 
@@ -244,7 +277,7 @@ function switchTab(targetTab) {
         if(feedbackForm) feedbackForm.classList.remove('hidden'); if(contactForm) contactForm.classList.add('hidden');
         if(feedbackBtn) feedbackBtn.classList.add('active'); if(contactBtn) contactBtn.classList.remove('active');
     } else {
-        if(contactForm) contactForm.remove('hidden'); if(feedbackForm) feedbackForm.classList.add('hidden');
+        if(contactForm) contactForm.classList.remove('hidden'); if(feedbackForm) feedbackForm.classList.add('hidden');
         if(contactBtn) contactBtn.className = 'active'; if(feedbackBtn) feedbackBtn.classList.remove('active');
     }
 }
@@ -290,6 +323,7 @@ function setupFAQEngine() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+    fetchLiveAnnouncements();
     fetchLiveSlideshow(); 
     fetchLiveCouncil();
     fetchLiveProjects();
