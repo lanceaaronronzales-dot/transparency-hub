@@ -83,6 +83,9 @@ body {
     background-color: #090d16;
     color: white;
     overflow: hidden;
+    /* FIXED: Force the hero background image canvas to seal directly to the alert bar bounds */
+    margin-top: 0 !important;
+    top: 0 !important;
 }
 
 .hero-bg-slideshow {
