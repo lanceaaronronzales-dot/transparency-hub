@@ -46,7 +46,8 @@ function navigateCenterView(targetSectionId, activeBtnId) {
 }
 
 /**
- * FIXED: Loops out ALL valid rows from your sheet to render multiple separated bulletin items
+ * UNLIMITED ALERTS & NOTICES ENGINE
+ * Loops through the entire spreadsheet table without any count limits
  */
 async function fetchLiveAnnouncements() {
     try {
@@ -56,111 +57,120 @@ async function fetchLiveAnnouncements() {
         const cleanRows = parseCSV(dataText);
         
         const bulletinContainer = document.getElementById('general-bulletin-container');
+        const emergencyBar = document.getElementById('emergency-announcement');
+        
         if (cleanRows.length <= 1) {
             if (bulletinContainer) bulletinContainer.innerHTML = `<p style="font-size: 14px; color: #94a3b8; text-align: center;">No active announcements logged.</p>`;
+            if (emergencyBar) emergencyBar.style.setProperty('display', 'none', 'important');
             return;
         }
 
-        // 1. ENGINE PHASE A: Extract the first emergency text row that doesn't equal "none"
-        let selectedAlertText = "";
-        let selectedBadgeType = "URGENT";
+        // 1. PROCESS ALL ACTIVE EMERGENCY BANNER ALERTS (NO LIMIT)
+        if (emergencyBar) {
+            // Clear out old static layout elements to build a dynamic dynamic vertical stacking area
+            emergencyBar.innerHTML = ''; 
+            let hasActiveEmergency = false;
 
-        for (let i = 1; i < cleanRows.length; i++) {
-            const row = cleanRows[i];
-            if (!row || !row[0]) continue;
-            const alertText = row[0].trim();
-            if (alertText !== "" && alertText !== "N/A" && alertText.toLowerCase() !== "none") {
-                selectedAlertText = alertText;
-                selectedBadgeType = row[1] || "URGENT";
-                break; // Grabs the highest available entry active in the list
+            for (let i = 1; i < cleanRows.length; i++) {
+                const row = cleanRows[i];
+                if (!row || !row[0]) continue;
+                
+                const alertText = row[0].trim();
+                if (alertText !== "" && alertText !== "N/A" && alertText.toLowerCase() !== "none") {
+                    hasActiveEmergency = true;
+                    const badgeType = row[1] ? row[1].trim().toUpperCase() : "URGENT";
+                    
+                    let iconMarkup = '<i class="fa-solid fa-triangle-exclamation"></i>';
+                    if (badgeType === 'NOTICE' || badgeType === 'INFO') iconMarkup = '<i class="fa-solid fa-circle-info"></i>';
+                    else if (badgeType === 'EMERGENCY') iconMarkup = '<i class="fa-solid fa-fire-flame-curved"></i>';
+
+                    // Append every single alert found row-by-row
+                    emergencyBar.innerHTML += `
+                        <div class="announcement-content" style="display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 14px; font-weight: 600; padding: 10px 24px; border-bottom: 1px solid rgba(255,255,255,0.15); width: 100%;">
+                            <span class="announcement-badge" style="background: rgba(255, 255, 255, 0.2); padding: 4px 10px; border-radius: 20px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 6px;">
+                                ${iconMarkup} ${badgeType}
+                            </span>
+                            <p style="margin: 0; color: white;">${alertText}</p>
+                        </div>
+                    `;
+                }
+            }
+
+            if (hasActiveEmergency) {
+                emergencyBar.style.setProperty('display', 'block', 'important');
+                // Dynamically offset body padding so the stacked banners don't block the website header content
+                document.body.style.paddingTop = `${emergencyBar.offsetHeight}px`;
+            } else {
+                emergencyBar.style.setProperty('display', 'none', 'important');
+                document.body.style.paddingTop = '0px';
             }
         }
-        processEmergencyAlert(selectedAlertText, selectedBadgeType);
 
-        // 2. ENGINE PHASE B: Loop and append all active Bulletin items cleanly
-        if (bulletinContainer) bulletinContainer.innerHTML = '';
-        let bulletinCount = 0;
+        // 2. PROCESS ALL BULLETIN BOARD POSTINGS (NO LIMIT)
+        if (bulletinContainer) {
+            bulletinContainer.innerHTML = '';
+            let bulletinCount = 0;
 
-        for (let i = 1; i < cleanRows.length; i++) {
-            const row = cleanRows[i];
-            if (!row || !row[2]) continue; // Skip rows with blank titles
+            for (let i = 1; i < cleanRows.length; i++) {
+                const row = cleanRows[i];
+                if (!row || !row[2] || row[2].trim() === "" || row[2] === "N/A") continue; 
 
-            bulletinCount++;
-            const title = row[2];
-            const details = row[3] || 'No description logged.';
-            const dateVal = row[4] || '';
-            const dateLabel = row[5] || 'Schedule';
-            const timeVal = row[6] || '';
-            const venueVal = row[7] || '';
+                bulletinCount++;
+                const title = row[2];
+                const details = row[3] || 'No description logged.';
+                const dateVal = row[4] || '';
+                const dateLabel = row[5] || 'Schedule';
+                const timeVal = row[6] || '';
+                const venueVal = row[7] || '';
 
-            let labelColor = '#2563eb'; let labelBg = '#eff6ff';
-            const cleanLabel = dateLabel.toLowerCase();
-            if (cleanLabel.includes('deadline') || cleanLabel.includes('due')) { labelColor = '#dc2626'; labelBg = '#fef2f2'; }
-            else if (cleanLabel.includes('meeting') || cleanLabel.includes('session')) { labelColor = '#d97706'; labelBg = '#fffbeb'; }
-            else if (cleanLabel.includes('event') || cleanLabel.includes('program')) { labelColor = '#16a34a'; labelBg = '#f0fdf4'; }
+                let labelColor = '#2563eb'; let labelBg = '#eff6ff';
+                const cleanLabel = dateLabel.toLowerCase();
+                if (cleanLabel.includes('deadline') || cleanLabel.includes('due')) { labelColor = '#dc2626'; labelBg = '#fef2f2'; }
+                else if (cleanLabel.includes('meeting') || cleanLabel.includes('session')) { labelColor = '#d97706'; labelBg = '#fffbeb'; }
+                else if (cleanLabel.includes('event') || cleanLabel.includes('program')) { labelColor = '#16a34a'; labelBg = '#f0fdf4'; }
 
-            bulletinContainer.innerHTML += `
-                <div class="bulletin-item-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; transition: all 0.2s;">
-                    <h3 style="font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 6px;">${title}</h3>
-                    <p style="font-size: 13px; color: #475569; line-height: 1.6; font-weight: 400; margin-bottom: 14px;">${details}</p>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; border-top: 1px dashed #f1f5f9; padding-top: 12px;">
-                        ${dateVal ? `
-                        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px;">
-                            <i class="fa-regular fa-calendar" style="color: #64748b; margin-top: 2px;"></i>
-                            <div>
-                                <span style="display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 9px; font-weight: 700; text-transform: uppercase; background: ${labelBg}; color: ${labelColor}; margin-bottom: 2px;">${dateLabel}</span>
-                                <strong style="display: block; color: #1e293b;">${dateVal}</strong>
-                            </div>
-                        </div>` : ''}
+                bulletinContainer.innerHTML += `
+                    <div class="bulletin-item-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; transition: all 0.2s; box-shadow: var(--shadow-sm);">
+                        <h3 style="font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 6px;">${title}</h3>
+                        <p style="font-size: 13px; color: #475569; line-height: 1.6; font-weight: 400; margin-bottom: 14px;">${details}</p>
                         
-                        ${timeVal ? `
-                        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px;">
-                            <i class="fa-regular fa-clock" style="color: #64748b; margin-top: 2px;"></i>
-                            <div>
-                                <span style="display: block; font-size: 10px; color: #94a3b8; font-weight: 600; text-transform: uppercase;">Time Slot</span>
-                                <strong style="color: #1e293b;">${timeVal}</strong>
-                            </div>
-                        </div>` : ''}
-                        
-                        ${venueVal ? `
-                        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px;">
-                            <i class="fa-solid fa-location-dot" style="color: #64748b; margin-top: 2px;"></i>
-                            <div>
-                                <span style="display: block; font-size: 10px; color: #94a3b8; font-weight: 600; text-transform: uppercase;">Location</span>
-                                <strong style="color: #1e293b;">${venueVal}</strong>
-                            </div>
-                        </div>` : ''}
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; border-top: 1px dashed #f1f5f9; padding-top: 12px;">
+                            ${dateVal ? `
+                            <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px;">
+                                <i class="fa-regular fa-calendar" style="color: #64748b; margin-top: 2px;"></i>
+                                <div>
+                                    <span style="display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 9px; font-weight: 700; text-transform: uppercase; background: ${labelBg}; color: ${labelColor}; margin-bottom: 2px;">${dateLabel}</span>
+                                    <strong style="display: block; color: #1e293b;">${dateVal}</strong>
+                                </div>
+                            </div>` : ''}
+                            
+                            ${timeVal ? `
+                            <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px;">
+                                <i class="fa-regular fa-clock" style="color: #64748b; margin-top: 2px;"></i>
+                                <div>
+                                    <span style="display: block; font-size: 10px; color: #94a3b8; font-weight: 600; text-transform: uppercase;">Time Slot</span>
+                                    <strong style="color: #1e293b;">${timeVal}</strong>
+                                </div>
+                            </div>` : ''}
+                            
+                            ${venueVal ? `
+                            <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px;">
+                                <i class="fa-solid fa-location-dot" style="color: #64748b; margin-top: 2px;"></i>
+                                <div>
+                                    <span style="display: block; font-size: 10px; color: #94a3b8; font-weight: 600; text-transform: uppercase;">Location</span>
+                                    <strong style="color: #1e293b;">${venueVal}</strong>
+                                </div>
+                            </div>` : ''}
+                        </div>
                     </div>
-                </div>
-            `;
-        }
-        
-        if (bulletinCount === 0 && bulletinContainer) {
-            bulletinContainer.innerHTML = `<p style="font-size: 14px; color: #94a3b8; text-align: center;">No active bulletin notices posted.</p>`;
+                `;
+            }
+            
+            if (bulletinCount === 0) {
+                bulletinContainer.innerHTML = `<p style="font-size: 14px; color: #94a3b8; text-align: center;">No active bulletin notices posted.</p>`;
+            }
         }
     } catch (err) { console.error(err); }
-}
-
-function processEmergencyAlert(alertText, badgeType) {
-    const emergencyBar = document.getElementById('emergency-announcement');
-    const emergencyPara = document.getElementById('emergency-text');
-    const badgeLabel = emergencyBar ? emergencyBar.querySelector('.announcement-badge') : null;
-    if (!emergencyBar) return;
-
-    if (!alertText || alertText.trim() === "") {
-        emergencyBar.style.setProperty('display', 'none', 'important');
-    } else {
-        emergencyBar.style.setProperty('display', 'flex', 'important');
-        if (emergencyPara) emergencyPara.innerText = alertText;
-        if (badgeLabel) {
-            const cleanBadge = badgeType ? badgeType.trim().toUpperCase() : "URGENT";
-            let iconMarkup = '<i class="fa-solid fa-triangle-exclamation"></i>';
-            if (cleanBadge === 'NOTICE' || cleanBadge === 'INFO') iconMarkup = '<i class="fa-solid fa-circle-info"></i>';
-            else if (cleanBadge === 'EMERGENCY') iconMarkup = '<i class="fa-solid fa-fire-flame-curved"></i>';
-            badgeLabel.innerHTML = `${iconMarkup} ${cleanBadge}`;
-        }
-    }
 }
 
 async function fetchLiveProjects() {
@@ -247,7 +257,7 @@ async function fetchLiveCouncil() {
         }
         if (loadingIndicator) loadingIndicator.classList.add('hidden');
         if (gridContainer) gridContainer.classList.remove('hidden');
-    } catch (err) { console.error(err); }
+    } catch (err) catch (err) { console.error(err); }
 }
 
 async function fetchLiveDocumentationFeed() {
