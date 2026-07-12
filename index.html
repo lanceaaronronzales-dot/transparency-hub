@@ -10,15 +10,13 @@
 </head>
 <body>
 
-    <!-- TOP ALERT BAR -->
     <div id="emergency-announcement" class="announcement-banner"></div>
 
-    <!-- HERO PROFILE HEADER -->
     <header class="immersive-hero">
         <div id="hero-bg-slideshow" class="hero-bg-slideshow"></div>
         <div class="hero-overlay"></div>
         
-        <div class="dashboard-viewport-grid" style="margin: 0 auto; width: 100%; max-width: 1600px; grid-template-columns: 1fr;">
+        <div style="margin: 0 auto; width: 100%; max-width: 1600px; padding: 0 24px;">
             <div class="hero-content-wrapper">
                 <div class="hero-brand-area">
                     <img src="Images/SK LOGO.jpg" alt="SK Logo" class="sk-logo">
@@ -34,10 +32,8 @@
         </div>
     </header>
 
-    <!-- MAIN PORTAL DASHBOARD CONTENT -->
     <main class="dashboard-viewport-grid">
 
-        <!-- DIRECTORY VIEW COLUMN -->
         <aside class="side-column">
             <div class="section-header">
                 <h2>SK Council Directory</h2>
@@ -51,18 +47,15 @@
             </div>
         </aside>
 
-        <!-- LIVE BULLETIN AND UPDATES TIER -->
         <section class="dashboard-panel">
             
-            <!-- CENTRAL CORE TABS -->
-            <nav style="display: flex; gap: 8px; background: #ffffff; padding: 12px 24px; border-radius: 16px; border: 1px solid rgba(226, 232, 240, 0.6); box-shadow: var(--shadow-sm);">
+            <nav style="display: flex; gap: 8px; background: #ffffff; padding: 12px 24px; border-radius: 16px; border: 1px solid rgba(226, 232, 240, 0.6); box-shadow: var(--shadow-sm); overflow-x: auto; white-space: nowrap;">
                 <button onclick="navigateCenterView('view-home')" class="tab-btn" style="background: var(--brand-blue); color: white;">General Bulletin</button>
                 <button onclick="navigateCenterView('view-docs')" class="tab-btn" style="background: transparent; color: var(--text-secondary);">Documentation</button>
                 <button onclick="navigateCenterView('view-pipeline')" class="tab-btn" style="background: transparent; color: var(--text-secondary);">Project Tracker</button>
                 <button onclick="navigateCenterView('view-budget')" class="tab-btn" style="background: transparent; color: var(--text-secondary);">Treasury Balance</button>
             </nav>
 
-            <!-- BULLETIN BOARD SECTION VIEW -->
             <div id="view-home" class="center-section-block">
                 <div class="section-header">
                     <h2>Active Community Notices</h2>
@@ -76,7 +69,6 @@
                 </div>
             </div>
 
-            <!-- RECOGNITION AND DOCUMENTATION FEED -->
             <div id="view-docs" class="center-section-block" style="display: none;">
                 <div class="section-header">
                     <h2>Community Documentation Logs</h2>
@@ -90,7 +82,6 @@
                 </div>
             </div>
 
-            <!-- PIPELINE PROJECT TRACKER SCREEN -->
             <div id="view-pipeline" class="center-section-block" style="display: none;">
                 <div class="section-header">
                     <h2>Project Execution Tracker</h2>
@@ -103,7 +94,6 @@
                 <div id="project-grid" class="project-grid hidden"></div>
             </div>
 
-            <!-- TREASURY ALLOCATION FRAME -->
             <div id="view-budget" class="center-section-block" style="display: none;">
                 <div class="section-header">
                     <h2>Public Fund Allocation & Budget Ledger</h2>
@@ -117,7 +107,6 @@
                 </div>
             </div>
 
-            <!-- DYNAMIC TARGET INTERACTION HUB -->
             <div class="center-section-block">
                 <div class="section-header">
                     <h2>Youth Voice Portal</h2>
@@ -134,7 +123,6 @@
                         <p id="alert-text"></p>
                     </div>
 
-                    <!-- FEEDBACK TRANSMISSION LAYER -->
                     <form id="feedback-form" class="hub-form">
                         <div>
                             <label for="feedback-category">Allocation Focus Area</label>
@@ -153,7 +141,6 @@
                         <button type="submit" class="submit-btn">Submit Anonymously</button>
                     </form>
 
-                    <!-- DIRECT OFFICIAL DESK REGISTRATION -->
                     <form id="contact-form" class="hub-form" style="display: none;">
                         <div>
                             <label for="contact-name">Full Name</label>
@@ -177,7 +164,6 @@
             </div>
         </section>
 
-        <!-- ASSISTANCE DESK SYSTEM CONTAINER -->
         <aside class="side-column">
             <div class="section-header">
                 <h2>Automated FAQ Desk</h2>
@@ -205,7 +191,6 @@
 
     </main>
 
-    <!-- SYSTEM GLOBAL FOOTER CONTENT -->
     <footer class="immersive-footer">
         <div class="footer-bg-layer">
             <img src="Images/SK LOGO.jpg" alt="SK Background">
