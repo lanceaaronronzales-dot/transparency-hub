@@ -1,18 +1,21 @@
 /* ==========================================================================
-   SANGGUNIANG KABATAAN PORTAL - CORE SYSTEM STYLESHEET
+   SANGGUNIANG KABATAAN PORTAL - MODERN SYSTEM STYLESHEET
    ========================================================================== */
 
 :root {
+    /* Refined Modern Color Palette */
     --bg-main: #f8fafc;
     --bg-card: #ffffff;
     --brand-blue: #2563eb;
     --brand-blue-hover: #1d4ed8;
     --brand-blue-light: #eff6ff;
     
+    /* Text Color Spectrum */
     --text-primary: #0f172a;
     --text-secondary: #334155;
     --text-muted: #64748b;
     
+    /* UI System Standards */
     --radius-lg: 16px;
     --radius-md: 12px;
     --radius-sm: 8px;
@@ -21,18 +24,11 @@
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Global Reset & Base Canvas Layout */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
-
-html, body {
-    width: 100%;
-    max-width: 100vw;
-    overflow-x: hidden;
-    margin: 0;
-    padding: 0;
 }
 
 body {
@@ -40,35 +36,19 @@ body {
     background-color: var(--bg-main);
     color: var(--text-secondary);
     line-height: 1.5;
+    overflow-x: hidden;
 }
 
-img {
-    max-width: 100%;
-    height: auto;
-}
-
-/* EMERGENCY TOP BANNER SYSTEM */
-#emergency-announcement, .announcement-banner {
-    width: 100% !important;
-    min-width: 100vw;
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    z-index: 9999;
-}
-
-#emergency-announcement div, .announcement-banner div {
-    width: 100% !important;
-    box-sizing: border-box;
-}
-
+/* 🚨 EMERGENCY TOP BANNER ALERT SYSTEM */
 .announcement-banner {
+    width: 100%;
     background: linear-gradient(135deg, #ef4444, #dc2626) !important;
     color: white;
     padding: 12px 24px;
-    display: none;
+    display: none; /* Controlled dynamically by app.js */
     align-items: center;
     justify-content: center;
+    z-index: 9999;
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
 }
 
@@ -92,7 +72,7 @@ img {
     gap: 6px;
 }
 
-/* HERO BANNER MODULE */
+/* 🌌 IMMERSIVE HERO BANNER SYSTEM */
 .immersive-hero {
     position: relative;
     width: 100%;
@@ -103,6 +83,7 @@ img {
     background-color: #090d16;
     color: white;
     overflow: hidden;
+    /* FIXED: Force the hero background image canvas to seal directly to the alert bar bounds */
     margin-top: 0 !important;
     top: 0 !important;
 }
@@ -129,6 +110,7 @@ img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    /* FIXED: Enhanced picture contrast and brightness filter parameters */
     filter: brightness(0.55) contrast(1.02);
 }
 
@@ -138,6 +120,7 @@ img {
     left: 0;
     width: 100%;
     height: 100%;
+    /* FIXED: Dropped opacity parameters down significantly to let the background pictures shine */
     background: linear-gradient(to bottom, rgba(9, 13, 22, 0.15) 0%, rgba(9, 13, 22, 0.75) 50%);
     z-index: 2;
 }
@@ -146,6 +129,7 @@ img {
     position: relative;
     z-index: 3;
     max-width: 800px;
+    /* Added subtle text drop shadow protection block so text is perfectly readable on light pictures */
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
@@ -188,7 +172,7 @@ img {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 20px;
-    text-shadow: none;
+    text-shadow: none; /* Prevent shadow bleed on badge */
 }
 
 .hero-title {
@@ -206,9 +190,10 @@ img {
     font-weight: 400;
 }
 
-/* PORTAL VIEWPORT GRID LAYOUT */
+/* 🎛️ DYNAMIC DASHBOARD VIEWPORT GRID SYSTEM */
 .dashboard-viewport-grid {
     display: grid;
+    /* Default desktop layout grid */
     grid-template-columns: 280px 1fr 340px;
     gap: 32px;
     max-width: 1600px;
@@ -224,6 +209,7 @@ img {
     gap: 32px;
 }
 
+/* Contemporary Card Block Standard Layout */
 .center-section-block, .side-column {
     background: var(--bg-card);
     border-radius: var(--radius-lg);
@@ -231,7 +217,6 @@ img {
     border: 1px solid rgba(226, 232, 240, 0.6);
     overflow: hidden;
     transition: var(--transition-smooth);
-    width: 100%;
 }
 
 .center-section-block:hover {
@@ -239,6 +224,7 @@ img {
     transform: translateY(-2px);
 }
 
+/* Section Header Typography Layout */
 .section-header {
     padding: 24px 24px 0 24px;
     margin-bottom: 20px;
@@ -257,14 +243,12 @@ img {
     color: var(--text-muted);
 }
 
-/* COUNCIL DIRECTORY MODULE */
-.council-grid, #council-grid {
+/* 👥 LEFT PANEL: COUNCIL DIRECTORY STYLING */
+.council-grid {
     display: flex;
     flex-direction: column;
     gap: 16px;
     padding: 0 20px 24px 20px;
-    width: 100%;
-    box-sizing: border-box;
 }
 
 .member-card {
@@ -273,8 +257,6 @@ img {
     padding: 18px;
     border: 1px solid #e2e8f0;
     transition: var(--transition-smooth);
-    width: 100% !important;
-    box-sizing: border-box;
 }
 
 .member-card:hover {
@@ -314,6 +296,7 @@ img {
     width: 14px;
 }
 
+/* Custom Card Layout Variations based on Roles */
 .chairperson-card {
     background: linear-gradient(to right, #fffdf5, #ffffff);
     border-left: 4px solid #fbbf24;
@@ -323,7 +306,7 @@ img {
     border-left: 4px solid var(--brand-blue);
 }
 
-/* DEVELOPMENT PILLARS MODULE */
+/* 🏛️ CENTER PANEL SECTION 1: CBYDP PILLARS */
 .pillars-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -363,7 +346,7 @@ img {
     line-height: 1.5;
 }
 
-/* PROJECT TRACKING MODULE */
+/* 📢 CENTER PANEL SECTION 2: LIVE PROJECTS PIPELINE GRIDS */
 .project-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -421,6 +404,7 @@ img {
     padding-top: 12px;
 }
 
+/* Live Dynamic Status Badges Configurations */
 .status-badge {
     padding: 4px 10px;
     border-radius: 20px;
@@ -446,7 +430,7 @@ img {
     animation: corePulse 1.8s infinite ease-in-out;
 }
 
-/* COMMUNITY FEEDBACK MODULE */
+/* 🗳️ CENTER PANEL SECTION 3: YOUTH VOICE FEEDBACK HUB */
 .form-container {
     padding: 0 24px 24px 24px;
 }
@@ -528,7 +512,7 @@ img {
     box-shadow: 0 6px 20px rgba(220, 38, 38, 0.25);
 }
 
-/* AUTOMATED ASSISTANCE CHAT HUB */
+/* 🤖 RIGHT PANEL: AUTOMATED FAQ CHAT SYSTEM ENGINE */
 .chat-container {
     display: flex;
     flex-direction: column;
@@ -640,7 +624,7 @@ img {
     background-color: var(--brand-blue-hover);
 }
 
-/* IMMERSIVE FOOTER SYSTEM */
+/* 🏢 IMMENSIVE FOOTER AREA CONFIGURATIONS */
 .immersive-footer {
     position: relative;
     width: 100%;
@@ -699,7 +683,7 @@ img {
     line-height: 1.6;
 }
 
-/* UI STATE MANAGEMENT CONTAINERS */
+/* ⚙️ SYSTEM STATE UTILITARY BOXES (LOADING / ALERTS) */
 .status-box {
     padding: 24px;
     text-align: center;
@@ -717,7 +701,7 @@ img {
 
 .hidden { display: none !important; }
 
-/* ANIMATION CORE MODULES */
+/* 🎬 KEYFRAMES CORE ANIMATIONS PLATFORM */
 @keyframes corePulse {
     0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.4); }
     70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(2, 132, 199, 0); }
@@ -732,41 +716,22 @@ img {
     100% { transform: rotate(360deg); }
 }
 
-/* RESPONSIVE DESIGN SYSTEM MEDIA QUERY MODULE */
+/* 📱 RESPONSIVE SYSTEM MEDIA BREAKPOINTS BRIDGE & LINEAR PATCH */
 @media (max-width: 1250px) {
     .dashboard-viewport-grid {
-        display: flex !important;
-        flex-direction: column !important;
+        grid-template-columns: 1fr !important;
         gap: 24px !important;
         margin-top: 20px !important;
-        padding: 0 16px;
-        width: 100%;
-    }
-    
-    .dashboard-panel {
-        order: 1;
-        width: 100%;
     }
     
     .side-column {
-        order: 2;
         max-width: 100% !important;
         width: 100% !important;
     }
     
-    .center-section-block {
-        width: 100%;
-        margin: 0 auto;
-    }
-    
     .hero-content-wrapper {
         flex-direction: column !important;
-        align-items: center !important;
-        text-align: center !important;
-    }
-    
-    .hero-brand-area {
-        justify-content: center;
+        align-items: stretch !important;
     }
     
     #hero-alerts-aside {
@@ -779,55 +744,7 @@ img {
     .hero-title { 
         font-size: 2.2rem !important; 
     }
-    .hero-brand-area {
-        gap: 12px;
-    }
-    .sk-logo {
-        width: 55px;
-        height: 55px;
-    }
-    
     .pillars-grid, .project-grid { 
         grid-template-columns: 1fr !important; 
-        padding: 0 16px 20px 16px;
-        width: 100%;
-        margin: 0 auto;
-    }
-    
-    .council-grid, #council-grid {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 12px !important;
-        padding: 0 16px 20px 16px;
-        width: 100%;
-        box-sizing: border-box;
-    }
-    
-    .member-card {
-        width: 100% !important;
-        min-height: 140px;
-        padding: 12px !important;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        text-align: center;
-        margin: 0;
-    }
-    
-    .member-name {
-        font-size: 13px !important;
-        margin-bottom: 6px;
-        line-height: 1.3;
-    }
-    
-    .member-purok, .member-contact {
-        font-size: 11px !important;
-        justify-content: center;
-        gap: 4px;
-    }
-    
-    .project-card, .pillar-card, .bulletin-item-card {
-        width: 100% !important;
-        margin: 0 auto;
     }
 }
