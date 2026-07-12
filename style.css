@@ -713,34 +713,42 @@ body {
         display: flex !important;
         flex-direction: column !important;
         gap: 24px !important;
-        margin-top: 20px !important;
-        padding: 0 16px;
-        width: 100%;
+        margin: 20px auto 60px auto !important; /* Forces perfect outer horizontal centering */
+        padding: 0 16px !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+        box-sizing: border-box !important;
     }
     
     .center-column {
         order: 1 !important;
         width: 100% !important;
+        margin: 0 auto !important;
     }
     
     .side-column {
         order: 2 !important;
         max-width: 100% !important;
         width: 100% !important;
+        margin: 0 auto !important;
     }
     
     .flex-column-mobile {
         order: 3 !important;
+        width: 100% !important;
+        margin: 0 auto !important;
     }
     
     .hero-content-wrapper {
         flex-direction: column !important;
         align-items: center !important;
         text-align: center !important;
+        margin: 0 auto !important;
+        width: 100% !important;
     }
     
     .hero-brand-area {
-        justify-content: center;
+        justify-content: center !important;
     }
     
     #hero-alerts-aside {
@@ -764,45 +772,47 @@ body {
     
     .pillars-grid, .project-grid { 
         grid-template-columns: 1fr !important; 
-        padding: 0 16px 20px 16px;
-        width: 100%;
-        margin: 0 auto;
+        padding: 0 16px 20px 16px !important;
+        width: 100% !important;
+        margin: 0 auto !important;
     }
     
+    /* Forces the directory container into a 2-column square grid matrix layout */
     .council-grid, #council-grid {
         display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-columns: repeat(2, 1fr) !important; /* Pairs cards perfectly side-by-side */
         gap: 12px !important;
-        padding: 0 16px 20px 16px;
-        width: 100%;
-        box-sizing: border-box;
+        padding: 0 16px 20px 16px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
     }
     
+    /* Converts rectangles into proportional square shapes */
     .member-card {
         width: 100% !important;
-        min-height: 140px;
+        min-height: 140px !important; /* Builds the square dimension profile */
         padding: 12px !important;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        text-align: center;
-        margin: 0;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        text-align: center !important;
+        margin: 0 !important;
     }
     
     .member-name {
         font-size: 13px !important;
-        margin-bottom: 6px;
-        line-height: 1.3;
+        margin-bottom: 6px !important;
+        line-height: 1.3 !important;
     }
     
     .member-purok, .member-contact {
         font-size: 11px !important;
-        justify-content: center;
-        gap: 4px;
+        justify-content: center !important;
+        gap: 4px !important;
     }
     
     .project-card, .pillar-card, .bulletin-item-card {
         width: 100% !important;
-        margin: 0 auto;
+        margin: 0 auto !important;
     }
 }
