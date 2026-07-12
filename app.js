@@ -401,14 +401,91 @@ function setupFormListeners() {
 function setupFAQEngine() {
     const chatForm = document.getElementById('chat-input-area'), userInput = document.getElementById('user-chat-input'), chatContainer = document.getElementById('chat-messages');
     if(!chatForm) return;
-    chatForm.addEventListener('submit', function(e) {
-        e.preventDefault(); const rawText = userInput.value.trim(); if (!rawText) return;
-        const msg = document.createElement('div'); msg.className = 'message user-message'; msg.innerText = rawText; chatContainer.appendChild(msg); userInput.value = '';
+
+    chatForm.addEventListener('submit', async function(e) {
+        e.preventDefault(); 
+        const rawText = userInput.value.trim(); 
+        if (!rawText) return;
+
+        // 1. Render the user's message card onto the screen
+        const msg = document.createElement('div'); 
+        msg.className = 'message user-message'; 
+        msg.innerText = rawText; 
+        chatContainer.appendChild(msg); 
+        userInput.value = '';
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        // Show a quick, neat typing indicator reply
+        const reply = document.createElement('div'); 
+        reply.className = 'message ai-message';
+        reply.innerHTML = `<i class="fa-solid fa-ellipsis fa-fade"></i> Checking repository books...`;
+        chatContainer.appendChild(reply);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        // Normalize text string for searching keywords
+        const lowerText = rawText.toLowerCase();
+        let answer = "I couldn't find a specific update for that keyword. For official assistance, please send a message using the form above or visit the SK Office!";
+
+        try {
+            // 2. LOGIC TIER A: Check for directory or council keyword lookups ("chair", "secretary", "purok")
+            if (lowerText.includes('chair') || lowerText.includes('sino') || lowerText.includes('leader') || lowerText.includes('sino ang') || lowerText.includes('sec') || lowerText.includes('treas')) {
+                const res = await fetch(COUNCIL_DATA_URL);
+                if (res.ok) {
+                    const cleanRows = parseCSV(await res.text());
+                    let matches = [];
+                    for(let i = 1; i < cleanRows.length; i++) {
+                        const row = cleanRows[i];
+                        if(row && row[0]) {
+                            const role = row[0].toLowerCase();
+                            if ((lowerText.includes('chair') && role.includes('chair')) ||
+                                (lowerText.includes('sec') && role.includes('sec')) ||
+                                (lowerText.includes('treas') && role.includes('treas')) ||
+                                (lowerText.includes('leader') || lowerText.includes('sino'))) {
+                                matches.push(`• ${row[0]}: ${row[1]} (${row[2] || 'All Puroks'})`);
+                            }
+                        }
+                    }
+                    if (matches.length > 0) {
+                        answer = `Here are the matching council profiles found:\n\n${matches.join('\n')}`;
+                    }
+                }
+            } 
+            // 3. LOGIC TIER B: Check for live tab logs and announcements text keywords ("deadline", "assistance", "sports", "meeting")
+            else {
+                const res = await fetch(ANNOUNCEMENT_DATA_URL);
+                if (res.ok) {
+                    const cleanRows = parseCSV(await res.text());
+                    let foundMatch = false;
+                    
+                    for(let i = 1; i < cleanRows.length; i++) {
+                        const row = cleanRows[i];
+                        if (!row) continue;
+                        
+                        const title = row[2] ? row[2].toLowerCase() : '';
+                        const details = row[3] ? row[3].toLowerCase() : '';
+                        
+                        // Check if the user query word overlaps with spreadsheet titles or descriptive details text
+                        if (title.includes(lowerText) || details.includes(lowerText) || 
+                            (lowerText.includes('deadline') && title.includes('assistance')) ||
+                            (lowerText.includes('kailan') && title.includes('assistance'))) {
+                            
+                            foundMatch = true;
+                            answer = `📢 **${row[2]}**\n\n${row[3] || ''}\n\n📅 **${row[5] || 'Date'}:** ${row[4] || 'N/A'}\n⏰ **Time:** ${row[6] || 'N/A'}\n📍 **Venue:** ${row[7] || 'N/A'}`;
+                            break; 
+                        }
+                    }
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            answer = "Sorry, I hit a slight connection glitch looking that up. Please double-check your browser network tab!";
+        }
+
+        // 4. Update the typing message container block with the official matching reply data
         setTimeout(() => {
-            const reply = document.createElement('div'); reply.className = 'message ai-message';
-            reply.innerText = "Processing your query... For direct assistance please use the Voice Hub panel on the right!";
-            chatContainer.appendChild(reply); chatContainer.scrollTop = chatContainer.scrollHeight;
-        }, 650);
+            reply.innerHTML = answer.replace(/\n/g, '<br>');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }, 500);
     });
 }
 
